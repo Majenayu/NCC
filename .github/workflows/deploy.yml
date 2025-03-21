@@ -1,0 +1,27 @@
+name: Deploy NCC Project
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build the Project
+      run: npm run build
+
+    - name: Deploy to GitHub Pages (if frontend)
+      if: success()
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist # Change this if your frontend build output is in another folder
