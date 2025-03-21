@@ -28,32 +28,36 @@
     </div>
 
     <script>
+        const BASE_URL = "https://ncc-qmzp.onrender.com"; // ✅ Backend URL for Render
+
         document.getElementById("loginForm").addEventListener("submit", async function (event) {
             event.preventDefault();
-    
+
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-    
+
             try {
-                const response = await fetch("http://localhost:3000/login", { // ✅ Port fixed
+                const response = await fetch(`${BASE_URL}/login`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name: username, password }) // ✅ Correct property names
+                    body: JSON.stringify({ name: username, password }) // ✅ Adjust if needed
                 });
 
                 const result = await response.json();
-    
+
                 if (response.ok) {
                     alert("Login successful!");
                     console.log(result.user);
-                    window.location.href = "home.html"; // Redirect after login
+                    window.location.href = "home.html"; // ✅ Redirect after login
                 } else {
-                    alert(result.message);
+                    alert(result.message || "Login failed!"); // ✅ Improved error message
                 }
             } catch (error) {
                 alert("Login failed! Please try again.");
+                console.error("Login Error:", error);
             }
         });
     </script>
+
 </body>
 </html>
