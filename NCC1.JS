@@ -2,10 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const router = express.Router();
+const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.mongodb.net/?retryWrites=true&w=majority&appName=Majen";
 
-// Ensure MongoDB is connected before defining the model
-if (!mongoose.connection.readyState) {
-    mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.mongodb.net/?retryWrites=true&w=majority&appName=Majen", {
+// Ensure MongoDB is connected once in main `server.js`
+if (mongoose.connection.readyState === 0) {
+    mongoose.connect(MONGO_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
@@ -16,7 +17,7 @@ if (!mongoose.connection.readyState) {
 // Define Cadet Schema
 const cadetSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    regNo: { type: String, required: true, unique: true }
+    regNo: { type: String, required: true, unique: true }  
 });
 
 const Cadet = mongoose.model("Cadet", cadetSchema);
