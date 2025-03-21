@@ -3,8 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const fs = require("fs");
-const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,10 +12,10 @@ const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors()); // Allow frontend to access backend
-app.use(express.static(__dirname)); // Serve static files
+app.use(cors());
+app.use(express.static(__dirname)); // Serve static files (HTML, CSS, JS)
 
-// MongoDB Connection
+// ✅ MongoDB Connection
 mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -25,20 +23,21 @@ mongoose.connect(MONGO_URI, {
 .then(() => console.log("✅ MongoDB Connected"))
 .catch(err => console.error("❌ MongoDB connection error:", err));
 
-// Load NCC1.js if it exists
-if (fs.existsSync("./NCC1.js")) {
-    const NCC1 = require("./NCC1");
-    app.use("/", NCC1);
-}
-
-// User Schema
+// ✅ User Schema & Model
 const userSchema = new mongoose.Schema({
     name: String,
     password: String
 });
 const User = mongoose.model("User", userSchema);
 
-// Register Endpoint
+// ✅ Cadet Schema & Model
+const cadetSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    regNo: { type: String, required: true, unique: true }
+});
+const Cadet = mongoose.model("Cadet", cadetSchema);
+
+// ✅ Register Endpoint
 app.post("/register", async (req, res) => {
     const { name, password } = req.body;
 
@@ -54,11 +53,11 @@ app.post("/register", async (req, res) => {
 
         res.status(201).json({ message: "✅ Registration successful" });
     } catch (error) {
-        res.status(500).json({ message: "❌ Server error", error: error.message });
+        res.status(500).json({ message: "❌ Server error" });
     }
 });
 
-// Login Endpoint
+// ✅ Login Endpoint
 app.post("/login", async (req, res) => {
     const { name, password } = req.body;
 
@@ -76,11 +75,57 @@ app.post("/login", async (req, res) => {
         const token = jwt.sign({ name: user.name }, SECRET_KEY, { expiresIn: "1h" });
         res.json({ message: "✅ Login successful", token, user });
     } catch (error) {
-        res.status(500).json({ message: "❌ Server error", error: error.message });
+        res.status(500).json({ message: "❌ Server error" });
     }
 });
 
-// Start Server
+// ✅ Get all cadets
+app.get("/get-cadets", async (req, res) => {
+    try {
+        const cadets = await Cadet.find();
+        res.json(cadets);
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error fetching cadets", error: error.message });
+    }
+});
+
+// ✅ Add a new cadet
+app.post("/add-cadets", async (req, res) => {
+    const { name, regNo } = req.body;
+    if (!name || !regNo) {
+        return res.status(400).json({ message: "❌ Name and Reg No are required" });
+    }
+
+    try {
+        const existingCadet = await Cadet.findOne({ regNo });
+        if (existingCadet) {
+            return res.status(400).json({ message: "❌ Cadet with this Reg No already exists" });
+        }
+
+        const newCadet = new Cadet({ name, regNo });
+        await newCadet.save();
+        res.status(201).json({ message: "✅ Cadet added successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error adding cadet", error: error.message });
+    }
+});
+
+// ✅ Remove a cadet
+app.delete("/remove-cadets/:id", async (req, res) => {
+    try {
+        const cadet = await Cadet.findById(req.params.id);
+        if (!cadet) {
+            return res.status(404).json({ message: "❌ Cadet not found" });
+        }
+
+        await cadet.deleteOne();
+        res.json({ message: "✅ Cadet removed successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error removing cadet", error: error.message });
+    }
+});
+
+// ✅ Start Server
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}/`);
 });
