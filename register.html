@@ -35,7 +35,9 @@
         <!-- Login Button -->
         <button type="button" class="login-btn" onclick="location.href='login.html'">Login</button>
     </form>
-</div><script>
+</div>
+
+<script>
     document.querySelector("#registration-form").addEventListener("submit", async function (event) {
         event.preventDefault();
 
@@ -49,7 +51,7 @@
         }
 
         try {
-            const response = await fetch("http://localhost:3000/register", { // Ensure it's 3000
+            const response = await fetch("https://ncc-qmzp.onrender.com/register", { // ✅ Updated API URL
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, password }) 
@@ -69,6 +71,5 @@
     });
 </script>
 
-    
 </body>
 </html>
