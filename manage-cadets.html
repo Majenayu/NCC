@@ -5,40 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Cadets</title>
     <script>
+        const BASE_URL = "https://ncc-qmzp.onrender.com"; // ✅ Updated backend URL
+        
         document.addEventListener("DOMContentLoaded", function () {
             fetchCadets(); // Load cadets on page load
+        });
 
-            function fetchCadets() {
-    fetch("/get-cadets")
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.getElementById("cadetTableBody");
-            tableBody.innerHTML = ""; // ❌ Clear old data to prevent duplicates
+        function fetchCadets() {
+            fetch(`${BASE_URL}/get-cadets`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById("cadetTableBody");
+                    tableBody.innerHTML = ""; // ❌ Clear old data to prevent duplicates
 
-            data.forEach((cadet, index) => {
-                const row = document.createElement("tr");
-                row.setAttribute("id", `cadet-${cadet._id}`);
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${cadet.name}</td>
-                    <td>${cadet.regNo}</td>
-                    <td>
-                        <button onclick="removeCadet('${cadet._id}')">Remove</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        })
-        .catch(error => console.error("Error fetching cadets:", error));
-}
+                    data.forEach((cadet, index) => {
+                        const row = document.createElement("tr");
+                        row.setAttribute("id", `cadet-${cadet._id}`);
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${cadet.name}</td>
+                            <td>${cadet.regNo}</td>
+                            <td>
+                                <button onclick="removeCadet('${cadet._id}')">Remove</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error("Error fetching cadets:", error));
+        }
 
-
-            document.getElementById("addCadetForm").addEventListener("submit", function (event) {
+        document.addEventListener("submit", function (event) {
+            if (event.target && event.target.id === "addCadetForm") {
                 event.preventDefault();
                 const name = document.getElementById("cadetName").value;
                 const regNo = document.getElementById("cadetRegNo").value;
 
-                fetch("/add-cadets", {
+                fetch(`${BASE_URL}/add-cadets`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name, regNo })
@@ -49,28 +52,27 @@
                     document.getElementById("addCadetForm").reset();
                 })
                 .catch(error => console.error("Error adding cadet:", error));
-            });
+            }
         });
 
         function removeCadet(id) {
-    if (!confirm("Are you sure you want to remove this cadet?")) {
-        return; // ❌ Cancel if user clicks "No"
-    }
-
-    fetch(`/remove-cadets/${id}`, { method: "DELETE" })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to remove cadet");
+            if (!confirm("Are you sure you want to remove this cadet?")) {
+                return; // ❌ Cancel if user clicks "No"
             }
-            return response.json();
-        })
-        .then(() => {
-            alert("Cadet removed successfully!"); // ✅ Success message
-            fetchCadets(); // 🔄 Refresh the list
-        })
-        .catch(error => console.error("Error removing cadet:", error));
-}
 
+            fetch(`${BASE_URL}/remove-cadets/${id}`, { method: "DELETE" })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to remove cadet");
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    alert("Cadet removed successfully!"); // ✅ Success message
+                    fetchCadets(); // 🔄 Refresh the list
+                })
+                .catch(error => console.error("Error removing cadet:", error));
+        }
     </script>
     <link rel="stylesheet" href="manage.css">
 </head>
@@ -78,7 +80,6 @@
 
     <h1>Manage Cadets</h1>
     <a href="home.html" class="back-home">🏠 Home</a>
-
 
     <!-- Form to add a new cadet -->
     <h2>Add New Cadet</h2>
