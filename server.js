@@ -1,34 +1,35 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const bcrypt = require("bcryptjs"); // Changed bcrypt to bcryptjs for compatibility
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Use environment variable for Render deployment
-const SECRET_KEY = process.env.SECRET_KEY || "your_secret_key"; // Use env variable
-
-let NCC1;
-if (fs.existsSync("./NCC1.js")) {
-    NCC1 = require("./NCC1"); // Ensure NCC1.js exists before requiring it
-    app.use("/", NCC1);
-}
+const PORT = process.env.PORT || 3000;
+const SECRET_KEY = process.env.SECRET_KEY || "your_secret_key";
+const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.mongodb.net/?retryWrites=true&w=majority&appName=Majen";
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-app.use(express.static(__dirname)); // Serve static files (HTML, CSS, JS)
+app.use(cors()); // Allow frontend to access backend
+app.use(express.static(__dirname)); // Serve static files
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.mongodb.net/?retryWrites=true&w=majority&appName=Majen", {
+mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
 .then(() => console.log("✅ MongoDB Connected"))
 .catch(err => console.error("❌ MongoDB connection error:", err));
+
+// Load NCC1.js if it exists
+if (fs.existsSync("./NCC1.js")) {
+    const NCC1 = require("./NCC1");
+    app.use("/", NCC1);
+}
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -53,7 +54,7 @@ app.post("/register", async (req, res) => {
 
         res.status(201).json({ message: "✅ Registration successful" });
     } catch (error) {
-        res.status(500).json({ message: "❌ Server error" });
+        res.status(500).json({ message: "❌ Server error", error: error.message });
     }
 });
 
@@ -75,7 +76,7 @@ app.post("/login", async (req, res) => {
         const token = jwt.sign({ name: user.name }, SECRET_KEY, { expiresIn: "1h" });
         res.json({ message: "✅ Login successful", token, user });
     } catch (error) {
-        res.status(500).json({ message: "❌ Server error" });
+        res.status(500).json({ message: "❌ Server error", error: error.message });
     }
 });
 
