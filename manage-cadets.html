@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Cadets</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchCadets(); // Load cadets on page load
+
+            function fetchCadets() {
+    fetch("/get-cadets")
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById("cadetTableBody");
+            tableBody.innerHTML = ""; // ❌ Clear old data to prevent duplicates
+
+            data.forEach((cadet, index) => {
+                const row = document.createElement("tr");
+                row.setAttribute("id", `cadet-${cadet._id}`);
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${cadet.name}</td>
+                    <td>${cadet.regNo}</td>
+                    <td>
+                        <button onclick="removeCadet('${cadet._id}')">Remove</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => console.error("Error fetching cadets:", error));
+}
+
+
+            document.getElementById("addCadetForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+                const name = document.getElementById("cadetName").value;
+                const regNo = document.getElementById("cadetRegNo").value;
+
+                fetch("/add-cadets", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, regNo })
+                })
+                .then(response => response.json())
+                .then(() => {
+                    fetchCadets(); // Refresh list
+                    document.getElementById("addCadetForm").reset();
+                })
+                .catch(error => console.error("Error adding cadet:", error));
+            });
+        });
+
+        function removeCadet(id) {
+    if (!confirm("Are you sure you want to remove this cadet?")) {
+        return; // ❌ Cancel if user clicks "No"
+    }
+
+    fetch(`/remove-cadets/${id}`, { method: "DELETE" })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to remove cadet");
+            }
+            return response.json();
+        })
+        .then(() => {
+            alert("Cadet removed successfully!"); // ✅ Success message
+            fetchCadets(); // 🔄 Refresh the list
+        })
+        .catch(error => console.error("Error removing cadet:", error));
+}
+
+    </script>
+    <link rel="stylesheet" href="manage.css">
+</head>
+<body>
+
+    <h1>Manage Cadets</h1>
+    <a href="home.html" class="back-home">🏠 Home</a>
+
+
+    <!-- Form to add a new cadet -->
+    <h2>Add New Cadet</h2>
+    <form id="addCadetForm">
+        <input type="text" id="cadetName" placeholder="Enter Name" required>
+        <input type="text" id="cadetRegNo" placeholder="Enter Reg No" required>
+        <button type="submit">Add Cadet</button>
+    </form>
+
+    <!-- Table to display cadets -->
+    <h2>Cadet List</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Sl. No</th>
+                <th>Name</th>
+                <th>Reg No</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="cadetTableBody">
+            <!-- Cadets will be loaded here dynamically -->
+        </tbody>
+    </table>
+
+</body>
+</html>

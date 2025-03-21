@@ -1,0 +1,325 @@
+/* General Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f2f7fa;
+    color: #333;
+    padding: 50px 0;
+    margin: 0;
+    animation: fadeIn 1s ease-in;
+}
+
+/* Container */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: fadeInUp 1s ease-in forwards;
+}
+
+/* Header */
+h2 {
+    text-align: center;
+    font-size: 30px;
+    color: #4CAF50;
+    margin-bottom: 20px;
+    animation: slideIn 0.8s ease-out;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Label Styling */
+.form-group label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Input, Select, Textarea Styling */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    background-color: #fafafa;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #4CAF50;
+    outline: none;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+/* Radio Buttons */
+.form-group input[type="radio"] {
+    width: auto;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+/* Submit Button */
+.form-group input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.form-group input[type="submit"]:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+/* Tags Container */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    opacity: 0;
+    animation: fadeIn 1s ease-in 1s forwards;
+}
+
+/* Individual Tag Styling */
+.tag {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 20px;
+    margin: 8px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.tag:hover {
+    transform: scale(1.1);
+}
+
+/* Tag Close Button */
+.tag span {
+    margin-left: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Tag Hover Effect */
+.tag span:hover {
+    color: #ff4444;
+    transform: rotate(90deg);
+}
+
+/* Profession Group */
+.profession-group {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    animation: fadeInUp 1s ease-out;
+}
+
+.profession-group h3 {
+    font-size: 20px;
+    color: #4CAF50;
+    margin-bottom: 15px;
+    opacity: 0;
+    animation: slideIn 1s ease-out forwards;
+}
+
+/* Styling for dynamic profession fields */
+.profession-group .form-group {
+    margin-bottom: 15px;
+}
+
+/* Button for removing tag */
+.tag span:hover {
+    color: #ff4444;
+}
+
+/* Form Styling */
+form {
+    max-width: 100%;
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Flexbox Layout */
+.profession-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Gradient Background */
+body {
+    background: linear-gradient(135deg, #f2f7fa, #e1f5e8);
+}
+
+/* Box Sizing */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Outline */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+}
+
+/* Box Shadow */
+.container {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Border Radius */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    border-radius: 8px;
+}
+
+/* Multiple Columns for Profession Details */
+.profession-group {
+    column-count: 2;
+    column-gap: 20px;
+    padding: 20px;
+}
+
+/* Transition Effect */
+.form-group input,
+.form-group select,
+.form-group textarea {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 14px;
+    }
+    
+    .form-group input[type="submit"] {
+        font-size: 16px;
+    }
+
+    .profession-group {
+        column-count: 1;
+    }
+}
+/* Styling for Register Button */
+.register-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.register-btn:hover {
+    background-color: #218838;
+}
+
+/* Styling for Login Button */
+.login-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    background-color: #0056b3;
+}
+.selectable-image {
+    width: 100px;
+    height: 100px;
+    margin: 5px;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.selectable-image.selected {
+    border: 3px solid green;
+    position: relative;
+}
+
+.selectable-image.selected::after {
+    content: "✅";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 20px;
+    color: green;
+    background: white;
+    border-radius: 50%;
+    padding: 2px;
+}

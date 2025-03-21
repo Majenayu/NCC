@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head><button id="logoutButton">Logout</button>
+
+<body>
+    <h1>Welcome to Attendance Management System</h1>
+    
+    <div class="container">
+        <a href="manage-cadets.html" class="button"><div class="circle">01</div> <i class="fas fa-users"></i> Manage Cadets</a>
+        <a href="add-attendance.html" class="button"><div class="circle">02</div> <i class="fas fa-calendar-check"></i> Add Attendance</a>
+        <a href="attendance-status.html" class="button"><div class="circle">03</div> <i class="fas fa-chart-line"></i> View Attendance Status</a>
+        <a href="download-attendance.html" class="button"><div class="circle">04</div> <i class="fas fa-download"></i> Download Attendance</a>
+        <a href="refreshment.html" class="button"><div class="circle">05</div> <i class="fas fa-download"></i> Add Refreshment Details</a>
+        <a href="refresh.html" class="button"><div class="circle">06</div> <i class="fas fa-download"></i> Fetch Refreshment Details</a>
+        </div>  
+         <script>
+            function logout() {
+                // Redirect to the login page
+                window.location.href = "index.html";
+            }document.getElementById("logoutButton").addEventListener("click", function () {
+    // Clear session and local storage
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Redirect to index.html
+    window.location.href = "index.html";
+
+    // Prevent the user from using the back button after logout
+    history.pushState(null, null, "index.html");
+    window.onpopstate = function () {
+        history.go(1);
+    };
+});
+
+
+
+            
+        </script>
+</body>
+</html>
+

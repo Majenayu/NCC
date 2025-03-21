@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="register.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Register</h2>
+    <form id="registration-form">
+        <!-- Name -->
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <input type="password" id="confirm-password" name="confirm-password" required>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="register-btn">Register</button>
+
+        <!-- Login Button -->
+        <button type="button" class="login-btn" onclick="location.href='login.html'">Login</button>
+    </form>
+</div><script>
+    document.querySelector("#registration-form").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const name = document.getElementById("name").value; 
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:3000/register", { // Ensure it's 3000
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, password }) 
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Registration successful!");
+                window.location.href = "login.html"; // Redirect to login page
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            alert("Registration failed! Please try again.");
+        }
+    });
+</script>
+
+    
+</body>
+</html>

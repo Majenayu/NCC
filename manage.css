@@ -1,0 +1,125 @@
+/* General Page Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Header Styling */
+h1 {
+    color: #ffffff;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+h2 {
+    color: white; /* Makes "Add New Cadet" and "Cadet List" text white */
+}
+
+/* Back to Home Button - Fixed to Top Right */
+.back-home {
+    position: fixed; /* Stays at the top-right even when scrolling */
+    top: 20px; /* Adjusted from 1000px */
+    right: 20px; /* Adjusted from 0px */
+    text-decoration: none;
+    font-size: 18px;
+    color: #ffffff;
+    font-weight: bold;
+    background-color: #007BFF;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.back-home:hover {
+    color: #ebebeb;
+    background-color: #0056b3;
+}
+
+/* Form Styling */
+form {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+/* Input Fields */
+input {
+    flex: 1;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Buttons */
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Add New Cadet Form - Center Alignment */
+.form-container {
+    width: 60%;
+    margin: auto;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Table Styling */
+table {
+    width: 80%;
+    margin: auto;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #007BFF;
+    color: white;
+}
+
+td {
+    background-color: #f9f9f9;
+}
+
+/* Remove Button */
+button.remove-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+button.remove-btn:hover {
+    background-color: #c82333;
+}
+/* For Gradient Background Instead */
+body {
+    background: linear-gradient(135deg, #d71313, #000080,#87CEEB);
+}
