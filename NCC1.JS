@@ -4,13 +4,13 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.mongodb.net/?retryWrites=true&w=majority&appName=Majen";
 
-// Ensure MongoDB is connected once in main `server.js`
+// Ensure MongoDB is connected once
 if (mongoose.connection.readyState === 0) {
     mongoose.connect(MONGO_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
-    .then(() => console.log("✅ MongoDB Connected"))
+    .then(() => console.log("✅ MongoDB Connected in NCC1.js"))
     .catch(err => console.error("❌ MongoDB connection error:", err));
 }
 
