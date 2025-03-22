@@ -5,10 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Attendance</title>
     <link rel="stylesheet" href="attendance.css">
+</head>
+<body>
+    <h1>Add Attendance</h1>
+    <a href="home.html" class="back-home">🏠 Home</a>
+
+    <label for="attendanceDate">Select Date:</label>
+    <input type="date" id="attendanceDate" onchange="loadPreviousAttendance()">
+
+    <label for="globalReason">Apply Reason to All:</label>
+    <select id="globalReason" onchange="applyReasonToAll()">
+        <option value="">Select Reason</option>
+        <option value="unit">Unit</option>
+        <option value="college">College</option>
+        <option value="both">Both</option>
+    </select>
+
+    <h2>Cadet List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Sl. No</th>
+                <th>Name (Reg No)</th>
+                <th>Present</th>
+                <th>Absent</th>
+                <th>Neutral</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody id="cadetTableBody">
+            <!-- Cadets will be dynamically inserted here -->
+        </tbody>
+    </table>
+
+    <button onclick="submitAttendance()">Submit Attendance</button>
+    <br><br>
+
     <script>
         async function loadCadets() {
             try {
-                const res = await fetch("/get-cadets"); // Fetch cadets from API
+                const res = await fetch("/get-cadets");
                 const cadets = await res.json();
                 const tableBody = document.getElementById("cadetTableBody");
                 tableBody.innerHTML = "";
@@ -39,6 +75,34 @@
                 });
             } catch (error) {
                 console.error("Error fetching cadets:", error);
+            }
+        }
+
+        async function loadPreviousAttendance() {
+            const date = document.getElementById("attendanceDate").value;
+            if (!date) return;
+
+            try {
+                const res = await fetch(`/get-attendance-by-date?date=${date}`);
+                const data = await res.json();
+                
+                if (data.data.length === 0) {
+                    console.log("No previous attendance found for this date.");
+                    return;
+                }
+
+                document.querySelectorAll("#cadetTableBody tr").forEach(row => {
+                    const regNo = row.querySelector("input[type=radio]").name;
+                    const cadetRecord = data.attendanceData.find(record => record.regNo === regNo);
+
+                    if (cadetRecord) {
+                        row.querySelector(`input[type=radio][value="${cadetRecord.status}"]`).checked = true;
+                        row.querySelector(".reason-select").value = cadetRecord.reason;
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error fetching previous attendance:", error);
             }
         }
 
@@ -82,40 +146,5 @@
 
         window.onload = loadCadets;
     </script>
-</head>
-<body>
-    <h1>Add Attendance</h1>
-    <a href="home.html" class="back-home">🏠 Home</a>
-
-    <label for="attendanceDate">Select Date:</label>
-    <input type="date" id="attendanceDate">
-
-    <label for="globalReason">Apply Reason to All:</label>
-    <select id="globalReason" onchange="applyReasonToAll()">
-        <option value="">Select Reason</option>
-        <option value="unit">Unit</option>
-        <option value="college">College</option>
-        <option value="both">Both</option>
-    </select>
-
-    <h2>Cadet List</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Sl. No</th>
-                <th>Name (Reg No)</th>
-                <th>Present</th>
-                <th>Absent</th>
-                <th>Neutral</th>
-                <th>Reason</th>
-            </tr>
-        </thead>
-        <tbody id="cadetTableBody">
-            <!-- Cadets will be dynamically inserted here -->
-        </tbody>
-    </table>
-
-    <button onclick="submitAttendance()">Submit Attendance</button>
-    <br><br>
 </body>
 </html>
