@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,7 +14,7 @@ const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use(express.static(__dirname)); // Serve static files (HTML, CSS, JS)
+app.use(express.static(path.join(__dirname))); // Serve static files (HTML, CSS, JS)
 
 // ✅ MongoDB Connection
 mongoose.connect(MONGO_URI, {
@@ -36,6 +37,19 @@ const cadetSchema = new mongoose.Schema({
     regNo: { type: String, required: true, unique: true }
 });
 const Cadet = mongoose.model("Cadet", cadetSchema);
+
+// ✅ Attendance Schema & Model
+const attendanceSchema = new mongoose.Schema({
+    date: { type: String, required: true },
+    attendanceData: [
+        {
+            regNo: { type: String, required: true },
+            status: { type: String, required: true },
+            reason: { type: String, required: true }
+        }
+    ]
+});
+const Attendance = mongoose.model("Attendance", attendanceSchema);
 
 // ✅ Register Endpoint
 app.post("/register", async (req, res) => {
@@ -122,6 +136,33 @@ app.delete("/remove-cadets/:id", async (req, res) => {
         res.json({ message: "✅ Cadet removed successfully" });
     } catch (error) {
         res.status(500).json({ message: "❌ Error removing cadet", error: error.message });
+    }
+});
+
+// ✅ Add Attendance
+app.post("/add-attendances", async (req, res) => {
+    const { date, attendanceData } = req.body;
+
+    if (!date || !attendanceData || attendanceData.length === 0) {
+        return res.status(400).json({ message: "❌ Date and attendance data are required" });
+    }
+
+    try {
+        const newAttendance = new Attendance({ date, attendanceData });
+        await newAttendance.save();
+        res.status(201).json({ message: "✅ Attendance recorded successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error saving attendance", error: error.message });
+    }
+});
+
+// ✅ Get Attendance Records
+app.get("/get-attendances", async (req, res) => {
+    try {
+        const attendanceRecords = await Attendance.find();
+        res.json(attendanceRecords);
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error fetching attendance records", error: error.message });
     }
 });
 
