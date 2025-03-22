@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Attendance</title>
+    <link rel="stylesheet" href="attendance.css">
+    <script>
+        async function loadCadets() {
+            try {
+                const res = await fetch("/get-cadets"); // Fetch cadets from API
+                const cadets = await res.json();
+                const tableBody = document.getElementById("cadetTableBody");
+                tableBody.innerHTML = "";
+
+                if (cadets.length === 0) {
+                    tableBody.innerHTML = "<tr><td colspan='6'>No cadets found.</td></tr>";
+                    return;
+                }
+
+                cadets.forEach((cadet, index) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${cadet.name} (${cadet.regNo})</td>
+                        <td><input type="radio" name="${cadet.regNo}" value="present"> ✅</td>
+                        <td><input type="radio" name="${cadet.regNo}" value="absent"> ❌</td>
+                        <td><input type="radio" name="${cadet.regNo}" value="neutral" checked> ⚪</td>
+                        <td>
+                            <select name="reason-${cadet.regNo}" class="reason-select">
+                                <option value="">Select Reason</option>
+                                <option value="unit">Unit</option>
+                                <option value="college">College</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error fetching cadets:", error);
+            }
+        }
+
+        async function submitAttendance() {
+            const date = document.getElementById("attendanceDate").value;
+            if (!date) {
+                alert("Please select a date!");
+                return;
+            }
+
+            const attendanceData = [];
+            document.querySelectorAll("#cadetTableBody tr").forEach(row => {
+                const regNo = row.querySelector("input[type=radio]").name;
+                const status = row.querySelector("input[type=radio]:checked").value;
+                const reason = row.querySelector(".reason-select").value;
+
+                if (!reason) {
+                    alert(`Please select a reason for ${regNo}`);
+                    return;
+                }
+
+                attendanceData.push({ regNo, status, reason });
+            });
+
+            const res = await fetch("/add-attendances", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ date, attendanceData }),
+            });
+
+            const result = await res.json();
+            alert(result.message || "Attendance Submitted!");
+        }
+
+        function applyReasonToAll() {
+            const selectedReason = document.getElementById("globalReason").value;
+            document.querySelectorAll(".reason-select").forEach(select => {
+                select.value = selectedReason;
+            });
+        }
+
+        window.onload = loadCadets;
+    </script>
+</head>
+<body>
+    <h1>Add Attendance</h1>
+    <a href="home.html" class="back-home">🏠 Home</a>
+
+    <label for="attendanceDate">Select Date:</label>
+    <input type="date" id="attendanceDate">
+
+    <label for="globalReason">Apply Reason to All:</label>
+    <select id="globalReason" onchange="applyReasonToAll()">
+        <option value="">Select Reason</option>
+        <option value="unit">Unit</option>
+        <option value="college">College</option>
+        <option value="both">Both</option>
+    </select>
+
+    <h2>Cadet List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Sl. No</th>
+                <th>Name (Reg No)</th>
+                <th>Present</th>
+                <th>Absent</th>
+                <th>Neutral</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody id="cadetTableBody">
+            <!-- Cadets will be dynamically inserted here -->
+        </tbody>
+    </table>
+
+    <button onclick="submitAttendance()">Submit Attendance</button>
+    <br><br>
+</body>
+</html>
