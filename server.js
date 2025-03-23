@@ -20,6 +20,16 @@ const SECRET_KEY = process.env.SECRET_KEY || "your_secret_key";
 const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.mongodb.net/?retryWrites=true&w=majority&appName=Majen";
 const storage = new GridFsStorage({ url: MONGO_URI, file: (req, file) => ({ bucketName: "uploads", filename: `${Date.now()}-${file.originalname}` }) });
 const upload = multer({ storage });
+
+
+const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: "uploads"
+});
+const readStream = bucket.openDownloadStream(file._id);
+readStream.pipe(res);
+
+
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -359,7 +369,7 @@ app.post("/upload", upload.array("images", 10), async (req, res) => {
 // ✅ Retrieve Image by ID
 app.get("/image/:id", async (req, res) => {
     try {
-        const file = await gfs.files.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
+       const file = await mongoose.connection.db.collection("uploads.files").findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
         if (!file || file.length === 0) {
             return res.status(404).json({ message: "❌ No image found" });
         }
