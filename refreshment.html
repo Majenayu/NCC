@@ -26,6 +26,9 @@
 
 
     <script>
+         document.getElementById("openCamera").addEventListener("click", function () {
+        document.getElementById("cameraInput").click();
+    });
         document.getElementById("imageInput").addEventListener("change", function () {
         const fileList = this.files;
         const fileDisplay = document.getElementById("selectedFiles");
