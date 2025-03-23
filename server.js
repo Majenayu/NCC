@@ -38,11 +38,15 @@ db.once("open", () => {
 const storage = new GridFsStorage({
     url: MONGO_URI,
     options: { useNewUrlParser: true, useUnifiedTopology: true },
-    file: (req, file) => ({
-        filename: file.originalname,
-        bucketName: "uploads",
-    }),
+    file: (req, file) => {
+        return {
+            filename: `${Date.now()}-${file.originalname}`,
+            bucketName: "uploads",
+            metadata: { originalName: file.originalname }
+        };
+    },
 });
+
 
 const upload = multer({ storage });
 
@@ -381,10 +385,15 @@ app.get("/image/:id", async (req, res) => {
 
 // ✅ Image Upload Route
 app.post("/upload", upload.array("images", 10), async (req, res) => {
+    console.log("Received files:", req.files); // Debugging log
+
     if (!req.files || req.files.length === 0) {
         return res.status(400).json({ message: "❌ No files uploaded" });
     }
+
     const imageIds = req.files.map(file => file.id);
+    console.log("Stored Image IDs:", imageIds); // Debugging log
+
     res.status(201).json({ message: "✅ Images uploaded successfully", imageIds });
 });
 
