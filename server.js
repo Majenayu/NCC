@@ -12,6 +12,8 @@ require("dotenv").config();
 const { GridFsStorage } = require("multer-gridfs-storage");
 const Grid = require("gridfs-stream");
 require("dotenv").config();
+const storage = new GridFsStorage({ url: MONGO_URI, file: (req, file) => ({ bucketName: "uploads", filename: `${Date.now()}-${file.originalname}` }) });
+const upload = multer({ storage });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,7 +28,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname))); // Serve static files (HTML, CSS, JS)
 
 // Connect to MongoDB
-mongoose.connect(mongoURI, {
+mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -341,7 +343,7 @@ app.get("/download-attendances", async (req, res) => {
 
 
 let gfs;
-conn.once("open", () => {
+db.once("open", () => {
     gfs = Grid(conn.db, mongoose.mongo);
     gfs.collection("uploads");
     console.log("✅ GridFS is ready for file storage");
@@ -360,26 +362,22 @@ app.post("/upload", upload.array("images", 10), async (req, res) => {
     res.status(201).json({ message: "✅ Images uploaded successfully", imageIds });
 });
 
-// ✅ Retrieve Image by ID
-app.get("/image/:id", async (req, res) => {
+// ✅ Retrieve Image by IDapp.get("/image/:id", async (req, res) => {
     try {
-        gfs.files.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) }, (err, file) => {
-            if (!file || file.length === 0) {
-                return res.status(404).json({ message: "❌ No image found" });
-            }
-
-            // Check if the file is an image
-            if (file.contentType.startsWith("image")) {
-                const readStream = gfs.createReadStream(file._id);
-                readStream.pipe(res);
-            } else {
-                res.status(400).json({ message: "❌ Not an image file" });
-            }
-        });
+        const file = await gfs.files.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
+        if (!file || file.length === 0) {
+            return res.status(404).json({ message: "❌ No image found" });
+        }
+        if (file.contentType.startsWith("image")) {
+            const readStream = gfs.createReadStream(file._id);
+            return readStream.pipe(res);
+        }
+        res.status(400).json({ message: "❌ Not an image file" });
     } catch (error) {
         res.status(500).json({ message: "❌ Server error", error: error.message });
     }
 });
+
 
 
 
