@@ -12,14 +12,14 @@ require("dotenv").config();
 const { GridFsStorage } = require("multer-gridfs-storage");
 const Grid = require("gridfs-stream");
 require("dotenv").config();
-const storage = new GridFsStorage({ url: MONGO_URI, file: (req, file) => ({ bucketName: "uploads", filename: `${Date.now()}-${file.originalname}` }) });
-const upload = multer({ storage });
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.SECRET_KEY || "your_secret_key";
 const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.mongodb.net/?retryWrites=true&w=majority&appName=Majen";
-
+const storage = new GridFsStorage({ url: MONGO_URI, file: (req, file) => ({ bucketName: "uploads", filename: `${Date.now()}-${file.originalname}` }) });
+const upload = multer({ storage });
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
