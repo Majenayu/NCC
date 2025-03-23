@@ -212,6 +212,115 @@ app.post("/get-attendances", async (req, res) => {
     }
 });
 
+app.get("/download-attendances", async (req, res) => {
+    try {
+        const { startDate, endDate, format } = req.query;
+        if (!startDate || !endDate || !format) return res.status(400).send("Missing parameters");
+
+        const records = await Attendance.find({
+            date: { $gte: new Date(startDate), $lte: new Date(endDate) },
+        });
+
+        if (records.length === 0) {
+            return res.status(404).send("No attendance records found.");
+        }
+
+        let cadetMap = new Map();
+        let allDates = new Set();
+
+        for (let record of records) {
+            let dateStr = record.date.toISOString().split("T")[0];
+            allDates.add(dateStr);
+
+            if (!cadetMap.has(record.regNo)) {
+                cadetMap.set(record.regNo, {
+                    name: `Cadet ${record.regNo}`,
+                    attendance: {},
+                    totalPresent: 0,
+                    totalAttendanceTaken: 0,
+                });
+            }
+
+            let cadetData = cadetMap.get(record.regNo);
+            cadetData.totalAttendanceTaken++;
+
+            if (record.status === "✅" || record.status.toLowerCase() === "present") {
+                cadetData.attendance[dateStr] = (cadetData.attendance[dateStr] || 0) + 1;
+                cadetData.totalPresent++;
+            } else {
+                cadetData.attendance[dateStr] = "-";
+            }
+        }
+
+        let sortedDates = Array.from(allDates).sort();
+
+        if (format === "word") {
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        new Paragraph({
+                            children: [new TextRun({ text: "Attendance Report", bold: true, size: 32 })],
+                            alignment: "center",
+                            spacing: { after: 300 },
+                        }),
+                        new Table({
+                            rows: [
+                                new TableRow({
+                                    children: [
+                                        new TableCell({ children: [new Paragraph("Reg No")] }),
+                                        new TableCell({ children: [new Paragraph("Name")] }),
+                                        ...sortedDates.map(date => new TableCell({ children: [new Paragraph(date)] })),
+                                        new TableCell({ children: [new Paragraph("Total Attendance Taken")] }),
+                                        new TableCell({ children: [new Paragraph("Total Present")] }),
+                                    ],
+                                }),
+                                ...Array.from(cadetMap).map(([regNo, cadet]) => new TableRow({
+                                    children: [
+                                        new TableCell({ children: [new Paragraph(regNo)] }),
+                                        new TableCell({ children: [new Paragraph(cadet.name)] }),
+                                        ...sortedDates.map(date => new TableCell({ children: [new Paragraph(cadet.attendance[date]?.toString() || "-")] })),
+                                        new TableCell({ children: [new Paragraph(cadet.totalAttendanceTaken.toString())] }),
+                                        new TableCell({ children: [new Paragraph(cadet.totalPresent.toString())] }),
+                                    ],
+                                })),
+                            ],
+                        }),
+                    ],
+                }],
+            });
+
+            const buffer = await Packer.toBuffer(doc);
+            res.setHeader("Content-Disposition", 'attachment; filename="attendance.docx"');
+            res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            res.end(buffer);
+
+        } else if (format === "excel") {
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet("Attendance");
+            worksheet.addRow(["Reg No", "Name", ...sortedDates, "Total Attendance Taken", "Total Present"]);
+
+            cadetMap.forEach((cadet, regNo) => {
+                let row = [regNo, cadet.name];
+                sortedDates.forEach(date => row.push(cadet.attendance[date] ?? "-"));
+                row.push(cadet.totalAttendanceTaken, cadet.totalPresent);
+                worksheet.addRow(row);
+            });
+
+            res.setHeader("Content-Disposition", 'attachment; filename="attendance.xlsx"');
+            res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            await workbook.xlsx.write(res);
+            res.end();
+        } else {
+            res.status(400).send("Invalid format requested");
+        }
+    } catch (err) {
+        console.error("Error generating report:", err);
+        res.status(500).send("Error generating report");
+    }
+});
+
+
 
 // ✅ Start Server
 app.listen(PORT, () => {
