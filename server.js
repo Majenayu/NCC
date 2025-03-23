@@ -351,9 +351,6 @@ app.post("/upload", upload.array("images", 10), async (req, res) => {
     }
 });
 
-document.getElementById("openCamera").addEventListener("click", function () {
-    document.getElementById("cameraInput").click();
-});
 
 
 // ✅ Start Server
