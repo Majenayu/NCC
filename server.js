@@ -29,6 +29,7 @@ const conn = mongoose.connection;
 conn.once("open", () => {
     console.log("✅ MongoDB Connected");
     bucket = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: "uploads" });
+    console.log("✅ GridFS Bucket Initialized");
 });
 
 // ✅ Multer Storage Setup
