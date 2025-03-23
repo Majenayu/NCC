@@ -18,13 +18,29 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.SECRET_KEY || "your_secret_key";
 const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.mongodb.net/?retryWrites=true&w=majority&appName=Majen";
-const storage = new GridFsStorage({ url: MONGO_URI, file: (req, file) => ({ bucketName: "uploads", filename: `${Date.now()}-${file.originalname}` }) });
+// Use mongoose.connection instead of conn
+const db = mongoose.connection;
+let bucket;
+// ✅ Wait for MongoDB connection before initializing GridFS
+db.once("open", () => {
+    console.log("✅ MongoDB Connected");
+    
+    bucket = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: "uploads" });
+    console.log("✅ GridFS initialized");
+});
+
+// ✅ Multer Storage Setup
+const storage = new GridFsStorage({
+    url: MONGO_URI,
+    file: (req, file) => ({
+        filename: file.originalname,
+        bucketName: "uploads"
+    })
+});
+
 const upload = multer({ storage });
 
 
-const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-    bucketName: "uploads"
-});
 const readStream = bucket.openDownloadStream(file._id);
 readStream.pipe(res);
 
@@ -43,8 +59,7 @@ mongoose.connect(MONGO_URI, {
     useUnifiedTopology: true
 });
 
-// Use mongoose.connection instead of conn
-const db = mongoose.connection;
+
 
 db.once("open", () => {
     console.log("Connected to MongoDB successfully!");
@@ -358,10 +373,8 @@ db.once("open", () => {
 // ✅ Image Upload Route
 app.post("/upload", upload.array("images", 10), async (req, res) => {
     if (!req.files || req.files.length === 0) {
-        return res.status(400).json({ message: "No files uploaded" });
+        return res.status(400).json({ message: "❌ No files uploaded" });
     }
-
-    // Store file IDs to retrieve later
     const imageIds = req.files.map(file => file.id);
     res.status(201).json({ message: "✅ Images uploaded successfully", imageIds });
 });
@@ -369,19 +382,22 @@ app.post("/upload", upload.array("images", 10), async (req, res) => {
 // ✅ Retrieve Image by ID
 app.get("/image/:id", async (req, res) => {
     try {
-       const file = await mongoose.connection.db.collection("uploads.files").findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
-        if (!file || file.length === 0) {
+        if (!bucket) {
+            return res.status(500).json({ message: "❌ GridFS not initialized yet" });
+        }
+
+        const file = await conn.db.collection("uploads.files").findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
+        if (!file) {
             return res.status(404).json({ message: "❌ No image found" });
         }
-        if (file.contentType.startsWith("image")) {
-            const readStream = gfs.createReadStream(file._id);
-            return readStream.pipe(res);
-        }
-        res.status(400).json({ message: "❌ Not an image file" });
+
+        const readStream = bucket.openDownloadStream(file._id);
+        readStream.pipe(res);
     } catch (error) {
         res.status(500).json({ message: "❌ Server error", error: error.message });
     }
 });
+
 
 
 
