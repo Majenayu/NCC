@@ -4,6 +4,9 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
+const ExcelJS = require("exceljs");
+const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, WidthType } = require("docx");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
