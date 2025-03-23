@@ -18,12 +18,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.SECRET_KEY || "your_secret_key";
 const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.mongodb.net/?retryWrites=true&w=majority&appName=Majen";
-// Use mongoose.connection instead of conn
-const db = mongoose.connection;
+
 let bucket;
 
-// ✅ Ensure `bucket` is initialized only after connection is open
-db.once("open", () => {
+// Use mongoose.connection instead of conn
+const db = mongoose.connection;
+const conn = mongoose.connection;
+
+// Initialize GridFS Bucket after MongoDB is connected
+conn.once("open", () => {
     console.log("✅ MongoDB Connected");
     bucket = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: "uploads" });
 });
