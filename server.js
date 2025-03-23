@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model("User", userSchema);
 
-const upload = multer({ storage });
+
 // ✅ Cadet Schema & Model
 const cadetSchema = new mongoose.Schema({
     name: { type: String, required: true },
