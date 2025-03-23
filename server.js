@@ -21,12 +21,11 @@ const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.
 // Use mongoose.connection instead of conn
 const db = mongoose.connection;
 let bucket;
-// ✅ Wait for MongoDB connection before initializing GridFS
+
+// ✅ Ensure `bucket` is initialized only after connection is open
 db.once("open", () => {
     console.log("✅ MongoDB Connected");
-    
     bucket = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: "uploads" });
-    console.log("✅ GridFS initialized");
 });
 
 // ✅ Multer Storage Setup
