@@ -183,6 +183,35 @@ app.post("/add-attendances", async (req, res) => {
     }
 });
 
+// ✅ Get Attendance within Date Range
+app.post("/get-attendances", async (req, res) => {
+    const { startDate, endDate } = req.body;
+    if (!startDate || !endDate) {
+        return res.status(400).json({ message: "❌ Start and end dates are required" });
+    }
+
+    try {
+        const records = await Attendance.find({
+            date: { $gte: startDate, $lte: endDate }
+        });
+
+        let attendanceSummary = {};
+
+        records.forEach(record => {
+            record.attendanceData.forEach(entry => {
+                if (!attendanceSummary[entry.regNo]) {
+                    attendanceSummary[entry.regNo] = { present: 0, absent: 0, neutral: 0 };
+                }
+                attendanceSummary[entry.regNo][entry.status]++;
+            });
+        });
+
+        res.json(attendanceSummary);
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error fetching attendance data", error: error.message });
+    }
+});
+
 
 // ✅ Start Server
 app.listen(PORT, () => {
