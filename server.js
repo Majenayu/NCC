@@ -139,7 +139,26 @@ app.delete("/remove-cadets/:id", async (req, res) => {
     }
 });
 
-// ✅ Add Attendance
+
+// ✅ Get Attendance by Date
+app.get("/get-attendance-by-date", async (req, res) => {
+    const { date } = req.query;
+    if (!date) {
+        return res.status(400).json({ message: "❌ Date is required" });
+    }
+
+    try {
+        const attendanceRecord = await Attendance.findOne({ date });
+        if (!attendanceRecord) {
+            return res.json({ message: "No attendance record found", data: [] });
+        }
+        res.json(attendanceRecord);
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error fetching attendance", error: error.message });
+    }
+});
+
+// ✅ Add or Update Attendance
 app.post("/add-attendances", async (req, res) => {
     const { date, attendanceData } = req.body;
 
@@ -148,6 +167,14 @@ app.post("/add-attendances", async (req, res) => {
     }
 
     try {
+        const existingAttendance = await Attendance.findOne({ date });
+
+        if (existingAttendance) {
+            existingAttendance.attendanceData = attendanceData;
+            await existingAttendance.save();
+            return res.json({ message: "✅ Attendance updated successfully" });
+        }
+
         const newAttendance = new Attendance({ date, attendanceData });
         await newAttendance.save();
         res.status(201).json({ message: "✅ Attendance recorded successfully" });
@@ -156,15 +183,6 @@ app.post("/add-attendances", async (req, res) => {
     }
 });
 
-// ✅ Get Attendance Records
-app.get("/get-attendances", async (req, res) => {
-    try {
-        const attendanceRecords = await Attendance.find();
-        res.json(attendanceRecords);
-    } catch (error) {
-        res.status(500).json({ message: "❌ Error fetching attendance records", error: error.message });
-    }
-});
 
 // ✅ Start Server
 app.listen(PORT, () => {
