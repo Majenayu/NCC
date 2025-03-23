@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Attendance</title>
+    <script>
+        function downloadAttendance(format) {
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+            window.location.href = `/download-attendances?startDate=${startDate}&endDate=${endDate}&format=${format}`;
+        }
+    </script>
+    <link rel="stylesheet" href="download.css">
+</head>
+<body>
+    <h1>Download Attendance</h1>
+    <input type="date" id="startDate">
+    <input type="date" id="endDate">
+    <button onclick="downloadAttendance('excel')">Download as Excel</button>
+    <button onclick="downloadAttendance('word')">Download as Word</button>
+    <br><br>
+    <a href="home.html" class="back-home">🏠 Home</a>
+</body>
+</html>
