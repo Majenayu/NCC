@@ -339,21 +339,7 @@ conn.once("open", () => {
     console.log("✅ GridFS is ready for file storage");
 });
 
-// ✅ GridFS Storage Engine
-const storage = new GridFsStorage({
-    url: MONGO_URI,
-    file: (req, file) => {
-        return new Promise((resolve, reject) => {
-            const filename = crypto.randomBytes(16).toString("hex") + path.extname(file.originalname);
-            const fileInfo = {
-                filename: filename,
-                bucketName: "uploads"
-            };
-            resolve(fileInfo);
-        });
-    }
-});
-const upload = multer({ storage });
+
 
 // ✅ Image Upload Route
 app.post("/upload", upload.array("images", 10), async (req, res) => {
