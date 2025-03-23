@@ -356,7 +356,8 @@ app.post("/upload", upload.array("images", 10), async (req, res) => {
     res.status(201).json({ message: "✅ Images uploaded successfully", imageIds });
 });
 
-// ✅ Retrieve Image by IDapp.get("/image/:id", async (req, res) => {
+// ✅ Retrieve Image by ID
+app.get("/image/:id", async (req, res) => {
     try {
         const file = await gfs.files.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
         if (!file || file.length === 0) {
