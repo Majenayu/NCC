@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const multer = require("multer");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
@@ -17,6 +18,7 @@ const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname))); // Serve static files (HTML, CSS, JS)
 
 // ✅ MongoDB Connection
@@ -33,7 +35,14 @@ const userSchema = new mongoose.Schema({
     password: String
 });
 const User = mongoose.model("User", userSchema);
-
+// Multer Storage Setup
+const storage = multer.diskStorage({
+    destination: "uploads/",
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    },
+});
+const upload = multer({ storage });
 // ✅ Cadet Schema & Model
 const cadetSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -318,6 +327,29 @@ app.get("/download-attendances", async (req, res) => {
     }
 });
 
+
+// Image Upload Route
+app.post("/upload", upload.array("images", 10), async (req, res) => {
+    try {
+        const { date } = req.body;
+        const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
+
+        // Check if the date exists in DB
+        let existingUpload = await ImageUpload.findOne({ date });
+        if (existingUpload) {
+            existingUpload.images.push(...imagePaths);
+            await existingUpload.save();
+        } else {
+            const newUpload = new ImageUpload({ date, images: imagePaths });
+            await newUpload.save();
+        }
+
+        res.status(201).json({ message: "Images uploaded successfully!", images: imagePaths });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error, please try again later." });
+    }
+});
 
 // ✅ Start Server
 app.listen(PORT, () => {
