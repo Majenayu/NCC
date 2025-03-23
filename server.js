@@ -214,14 +214,14 @@ app.post("/get-attendances", async (req, res) => {
         res.status(500).json({ message: "❌ Error fetching attendance data", error: error.message });
     }
 });
-
 app.get("/download-attendances", async (req, res) => {
     try {
         const { startDate, endDate, format } = req.query;
         if (!startDate || !endDate || !format) return res.status(400).send("Missing parameters");
 
+        // Fetch attendance records within date range
         const records = await Attendance.find({
-            date: { $gte: new Date(startDate), $lte: new Date(endDate) },
+            date: { $gte: startDate, $lte: endDate }
         });
 
         if (records.length === 0) {
@@ -232,27 +232,27 @@ app.get("/download-attendances", async (req, res) => {
         let allDates = new Set();
 
         for (let record of records) {
-            let dateStr = record.date.toISOString().split("T")[0];
-            allDates.add(dateStr);
+            allDates.add(record.date);
+            record.attendanceData.forEach(entry => {
+                if (!cadetMap.has(entry.regNo)) {
+                    cadetMap.set(entry.regNo, {
+                        name: `Cadet ${entry.regNo}`,
+                        attendance: {},
+                        totalPresent: 0,
+                        totalAttendanceTaken: 0
+                    });
+                }
 
-            if (!cadetMap.has(record.regNo)) {
-                cadetMap.set(record.regNo, {
-                    name: `Cadet ${record.regNo}`,
-                    attendance: {},
-                    totalPresent: 0,
-                    totalAttendanceTaken: 0,
-                });
-            }
+                let cadetData = cadetMap.get(entry.regNo);
+                cadetData.totalAttendanceTaken++;
 
-            let cadetData = cadetMap.get(record.regNo);
-            cadetData.totalAttendanceTaken++;
-
-            if (record.status === "✅" || record.status.toLowerCase() === "present") {
-                cadetData.attendance[dateStr] = (cadetData.attendance[dateStr] || 0) + 1;
-                cadetData.totalPresent++;
-            } else {
-                cadetData.attendance[dateStr] = "-";
-            }
+                if (entry.status === "✅" || entry.status.toLowerCase() === "present") {
+                    cadetData.attendance[record.date] = "✅";
+                    cadetData.totalPresent++;
+                } else {
+                    cadetData.attendance[record.date] = "-";
+                }
+            });
         }
 
         let sortedDates = Array.from(allDates).sort();
@@ -260,13 +260,8 @@ app.get("/download-attendances", async (req, res) => {
         if (format === "word") {
             const doc = new Document({
                 sections: [{
-                    properties: {},
                     children: [
-                        new Paragraph({
-                            children: [new TextRun({ text: "Attendance Report", bold: true, size: 32 })],
-                            alignment: "center",
-                            spacing: { after: 300 },
-                        }),
+                        new Paragraph({ text: "Attendance Report", bold: true, size: 32, alignment: "center" }),
                         new Table({
                             rows: [
                                 new TableRow({
@@ -275,22 +270,22 @@ app.get("/download-attendances", async (req, res) => {
                                         new TableCell({ children: [new Paragraph("Name")] }),
                                         ...sortedDates.map(date => new TableCell({ children: [new Paragraph(date)] })),
                                         new TableCell({ children: [new Paragraph("Total Attendance Taken")] }),
-                                        new TableCell({ children: [new Paragraph("Total Present")] }),
-                                    ],
+                                        new TableCell({ children: [new Paragraph("Total Present")] })
+                                    ]
                                 }),
                                 ...Array.from(cadetMap).map(([regNo, cadet]) => new TableRow({
                                     children: [
                                         new TableCell({ children: [new Paragraph(regNo)] }),
                                         new TableCell({ children: [new Paragraph(cadet.name)] }),
-                                        ...sortedDates.map(date => new TableCell({ children: [new Paragraph(cadet.attendance[date]?.toString() || "-")] })),
+                                        ...sortedDates.map(date => new TableCell({ children: [new Paragraph(cadet.attendance[date] || "-")] })),
                                         new TableCell({ children: [new Paragraph(cadet.totalAttendanceTaken.toString())] }),
-                                        new TableCell({ children: [new Paragraph(cadet.totalPresent.toString())] }),
-                                    ],
-                                })),
-                            ],
-                        }),
-                    ],
-                }],
+                                        new TableCell({ children: [new Paragraph(cadet.totalPresent.toString())] })
+                                    ]
+                                }))
+                            ]
+                        })
+                    ]
+                }]
             });
 
             const buffer = await Packer.toBuffer(doc);
@@ -305,7 +300,7 @@ app.get("/download-attendances", async (req, res) => {
 
             cadetMap.forEach((cadet, regNo) => {
                 let row = [regNo, cadet.name];
-                sortedDates.forEach(date => row.push(cadet.attendance[date] ?? "-"));
+                sortedDates.forEach(date => row.push(cadet.attendance[date] || "-"));
                 row.push(cadet.totalAttendanceTaken, cadet.totalPresent);
                 worksheet.addRow(row);
             });
@@ -322,7 +317,6 @@ app.get("/download-attendances", async (req, res) => {
         res.status(500).send("Error generating report");
     }
 });
-
 
 
 // ✅ Start Server
