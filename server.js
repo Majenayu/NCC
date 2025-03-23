@@ -25,14 +25,22 @@ app.use(cors());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname))); // Serve static files (HTML, CSS, JS)
 
-// ✅ MongoDB Connection
-mongoose.connect(MONGO_URI, {
+// Connect to MongoDB
+mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-})
-.then(() => console.log("✅ MongoDB Connected"))
-.catch(err => console.error("❌ MongoDB connection error:", err));
+});
 
+// Use mongoose.connection instead of conn
+const db = mongoose.connection;
+
+db.once("open", () => {
+    console.log("Connected to MongoDB successfully!");
+});
+
+db.on("error", (err) => {
+    console.error("MongoDB connection error:", err);
+});
 // ✅ User Schema & Model
 const userSchema = new mongoose.Schema({
     name: String,
