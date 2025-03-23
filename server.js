@@ -3,10 +3,14 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const multer = require("multer");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const ExcelJS = require("exceljs");
 const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, WidthType } = require("docx");
+require("dotenv").config();
+const { GridFsStorage } = require("multer-gridfs-storage");
+const Grid = require("gridfs-stream");
 require("dotenv").config();
 
 const app = express();
@@ -328,26 +332,58 @@ app.get("/download-attendances", async (req, res) => {
 });
 
 
-// Image Upload Route
+let gfs;
+conn.once("open", () => {
+    gfs = Grid(conn.db, mongoose.mongo);
+    gfs.collection("uploads");
+    console.log("✅ GridFS is ready for file storage");
+});
+
+// ✅ GridFS Storage Engine
+const storage = new GridFsStorage({
+    url: MONGO_URI,
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            const filename = crypto.randomBytes(16).toString("hex") + path.extname(file.originalname);
+            const fileInfo = {
+                filename: filename,
+                bucketName: "uploads"
+            };
+            resolve(fileInfo);
+        });
+    }
+});
+const upload = multer({ storage });
+
+// ✅ Image Upload Route
 app.post("/upload", upload.array("images", 10), async (req, res) => {
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ message: "No files uploaded" });
+    }
+
+    // Store file IDs to retrieve later
+    const imageIds = req.files.map(file => file.id);
+    res.status(201).json({ message: "✅ Images uploaded successfully", imageIds });
+});
+
+// ✅ Retrieve Image by ID
+app.get("/image/:id", async (req, res) => {
     try {
-        const { date } = req.body;
-        const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
+        gfs.files.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) }, (err, file) => {
+            if (!file || file.length === 0) {
+                return res.status(404).json({ message: "❌ No image found" });
+            }
 
-        // Check if the date exists in DB
-        let existingUpload = await ImageUpload.findOne({ date });
-        if (existingUpload) {
-            existingUpload.images.push(...imagePaths);
-            await existingUpload.save();
-        } else {
-            const newUpload = new ImageUpload({ date, images: imagePaths });
-            await newUpload.save();
-        }
-
-        res.status(201).json({ message: "Images uploaded successfully!", images: imagePaths });
+            // Check if the file is an image
+            if (file.contentType.startsWith("image")) {
+                const readStream = gfs.createReadStream(file._id);
+                readStream.pipe(res);
+            } else {
+                res.status(400).json({ message: "❌ Not an image file" });
+            }
+        });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error, please try again later." });
+        res.status(500).json({ message: "❌ Server error", error: error.message });
     }
 });
 
