@@ -19,16 +19,13 @@
         <input type="file" id="imageInput" multiple accept="image/*" style="display: none;">
         <div id="selectedFiles"></div>
         <!-- Camera Capture Button -->
-<button id="openCamera">Open Camera</button>
 
         <button onclick="uploadImages()">Upload</button>
     </div> <a href="home.html" class="back-home">🏠 Home</a>
 
 
     <script>
-         document.getElementById("openCamera").addEventListener("click", function () {
-        document.getElementById("cameraInput").click();
-    });
+    
         document.getElementById("imageInput").addEventListener("change", function () {
         const fileList = this.files;
         const fileDisplay = document.getElementById("selectedFiles");
