@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const multer = require("multer");
 const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const ExcelJS = require("exceljs");
@@ -11,7 +10,7 @@ const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, WidthT
 require("dotenv").config();
 const { GridFsStorage } = require("multer-gridfs-storage");
 const Grid = require("gridfs-stream");
-require("dotenv").config();
+
 
 
 const app = express();
@@ -20,32 +19,34 @@ const SECRET_KEY = process.env.SECRET_KEY || "your_secret_key";
 const MONGO_URI = process.env.MONGODB_URI || "mongodb+srv://NCC:NCC@majen.ivckg.mongodb.net/?retryWrites=true&w=majority&appName=Majen";
 
 let bucket;
+// ✅ Connect to MongoDB
+mongoose
+    .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("✅ MongoDB Connected"))
+    .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
 // Use mongoose.connection instead of conn
 const db = mongoose.connection;
-const conn = mongoose.connection;
 
-// Initialize GridFS Bucket after MongoDB is connected
-conn.once("open", () => {
-    console.log("✅ MongoDB Connected");
-    bucket = new mongoose.mongo.GridFSBucket(conn.db, { bucketName: "uploads" });
+// ✅ Initialize GridFS Bucket after MongoDB is connected
+db.once("open", () => {
+    bucket = new mongoose.mongo.GridFSBucket(db.db, { bucketName: "uploads" });
     console.log("✅ GridFS Bucket Initialized");
 });
 
 // ✅ Multer Storage Setup
 const storage = new GridFsStorage({
     url: MONGO_URI,
+    options: { useNewUrlParser: true, useUnifiedTopology: true },
     file: (req, file) => ({
         filename: file.originalname,
-        bucketName: "uploads"
-    })
+        bucketName: "uploads",
+    }),
 });
 
 const upload = multer({ storage });
 
 
-const readStream = bucket.openDownloadStream(file._id);
-readStream.pipe(res);
 
 
 
@@ -56,21 +57,12 @@ app.use(cors());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname))); // Serve static files (HTML, CSS, JS)
 
-// Connect to MongoDB
-mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
 
 
 
-db.once("open", () => {
-    console.log("Connected to MongoDB successfully!");
-});
 
-db.on("error", (err) => {
-    console.error("MongoDB connection error:", err);
-});
+
+
 // ✅ User Schema & Model
 const userSchema = new mongoose.Schema({
     name: String,
@@ -373,6 +365,20 @@ db.once("open", () => {
 
 
 
+// ✅ Retrieve Image by ID
+app.get("/image/:id", async (req, res) => {
+    try {
+        if (!bucket) return res.status(500).json({ message: "❌ GridFS not initialized yet" });
+
+        const file = await db.collection("uploads.files").findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
+        if (!file) return res.status(404).json({ message: "❌ No image found" });
+
+        bucket.openDownloadStream(new mongoose.Types.ObjectId(req.params.id)).pipe(res);
+    } catch (error) {
+        res.status(500).json({ message: "❌ Error retrieving image" });
+    }
+});
+
 // ✅ Image Upload Route
 app.post("/upload", upload.array("images", 10), async (req, res) => {
     if (!req.files || req.files.length === 0) {
@@ -381,27 +387,6 @@ app.post("/upload", upload.array("images", 10), async (req, res) => {
     const imageIds = req.files.map(file => file.id);
     res.status(201).json({ message: "✅ Images uploaded successfully", imageIds });
 });
-
-// ✅ Retrieve Image by ID
-app.get("/image/:id", async (req, res) => {
-    try {
-        if (!bucket) {
-            return res.status(500).json({ message: "❌ GridFS not initialized yet" });
-        }
-
-        const file = await conn.db.collection("uploads.files").findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
-        if (!file) {
-            return res.status(404).json({ message: "❌ No image found" });
-        }
-
-        const readStream = bucket.openDownloadStream(file._id);
-        readStream.pipe(res);
-    } catch (error) {
-        res.status(500).json({ message: "❌ Server error", error: error.message });
-    }
-});
-
-
 
 
 
