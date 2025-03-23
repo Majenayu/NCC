@@ -49,13 +49,7 @@ const userSchema = new mongoose.Schema({
     password: String
 });
 const User = mongoose.model("User", userSchema);
-// Multer Storage Setup
-const storage = multer.diskStorage({
-    destination: "uploads/",
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    },
-});
+
 const upload = multer({ storage });
 // ✅ Cadet Schema & Model
 const cadetSchema = new mongoose.Schema({
