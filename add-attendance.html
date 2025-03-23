@@ -33,13 +33,10 @@
                 <th>Reason</th>
             </tr>
         </thead>
-        <tbody id="cadetTableBody">
-            <!-- Cadets will be dynamically inserted here -->
-        </tbody>
+        <tbody id="cadetTableBody"></tbody>
     </table>
 
     <button onclick="submitAttendance()">Submit Attendance</button>
-    <br><br>
 
     <script>
         async function loadCadets() {
@@ -59,9 +56,9 @@
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${cadet.name} (${cadet.regNo})</td>
-                        <td><input type="radio" name="${cadet.regNo}" value="present"> ✅</td>
-                        <td><input type="radio" name="${cadet.regNo}" value="absent"> ❌</td>
-                        <td><input type="radio" name="${cadet.regNo}" value="neutral" checked> ⚪</td>
+                        <td><input type="radio" name="${cadet.regNo}" value="present"></td>
+                        <td><input type="radio" name="${cadet.regNo}" value="absent"></td>
+                        <td><input type="radio" name="${cadet.regNo}" value="neutral" checked></td>
                         <td>
                             <select name="reason-${cadet.regNo}" class="reason-select">
                                 <option value="">Select Reason</option>
@@ -85,22 +82,21 @@
             try {
                 const res = await fetch(`/get-attendance-by-date?date=${date}`);
                 const data = await res.json();
-                
-                if (data.data.length === 0) {
+
+                if (data.attendanceData.length === 0) {
                     console.log("No previous attendance found for this date.");
                     return;
                 }
 
                 document.querySelectorAll("#cadetTableBody tr").forEach(row => {
                     const regNo = row.querySelector("input[type=radio]").name;
-                    const cadetRecord = data.attendanceData.find(record => record.regNo === regNo);
+                    const record = data.attendanceData.find(item => item.regNo === regNo);
 
-                    if (cadetRecord) {
-                        row.querySelector(`input[type=radio][value="${cadetRecord.status}"]`).checked = true;
-                        row.querySelector(".reason-select").value = cadetRecord.reason;
+                    if (record) {
+                        row.querySelector(`input[type=radio][value="${record.status}"]`).checked = true;
+                        row.querySelector(".reason-select").value = record.reason;
                     }
                 });
-
             } catch (error) {
                 console.error("Error fetching previous attendance:", error);
             }
@@ -119,29 +115,21 @@
                 const status = row.querySelector("input[type=radio]:checked").value;
                 const reason = row.querySelector(".reason-select").value;
 
-                if (!reason) {
-                    alert(`Please select a reason for ${regNo}`);
-                    return;
-                }
-
                 attendanceData.push({ regNo, status, reason });
             });
 
-            const res = await fetch("/add-attendances", {
+            await fetch("/add-attendances", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ date, attendanceData }),
             });
 
-            const result = await res.json();
-            alert(result.message || "Attendance Submitted!");
+            alert("Attendance Submitted!");
         }
 
         function applyReasonToAll() {
-            const selectedReason = document.getElementById("globalReason").value;
-            document.querySelectorAll(".reason-select").forEach(select => {
-                select.value = selectedReason;
-            });
+            const reason = document.getElementById("globalReason").value;
+            document.querySelectorAll(".reason-select").forEach(select => select.value = reason);
         }
 
         window.onload = loadCadets;
