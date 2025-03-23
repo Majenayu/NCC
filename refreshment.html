@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Images</title>
+    <link rel="stylesheet" href="refreshment.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Upload Images for a Date</h2>
+        <input type="date" id="datePicker">
+
+        <!-- Custom File Input -->
+        <label for="imageInput" class="file-label">Select Images</label>
+        <input type="file" id="imageInput" multiple accept="image/*" style="display: none;">
+        <div id="selectedFiles"></div>
+        
+        <button onclick="uploadImages()">Upload</button>
+    </div> <a href="home.html" class="back-home">🏠 Home</a>
+
+
+    <script>
+        document.getElementById("imageInput").addEventListener("change", function () {
+        const fileList = this.files;
+        const fileDisplay = document.getElementById("selectedFiles");
+
+        if (fileList.length === 0) {
+            fileDisplay.innerHTML = "<p>No files selected</p>";
+            return;
+        }
+
+        let fileNames = "<strong>Selected Files:</strong><br>";
+        for (const file of fileList) {
+            fileNames += `📂 ${file.name}<br>`;
+        }
+
+        fileDisplay.innerHTML = fileNames;
+    });
+
+        // Clicking the label opens the file picker
+        document.querySelector(".file-label").addEventListener("click", function () {
+            document.getElementById("imageInput").click();
+        });
+
+        async function uploadImages() {
+            const date = document.getElementById("datePicker").value;
+            const files = document.getElementById("imageInput").files;
+            
+            if (!date || files.length === 0) {
+                alert("Please select a date and images.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("date", date);
+            for (const file of files) {
+                formData.append("images", file);
+            }
+
+            try {
+                const response = await fetch("http://localhost:3000/upload", { // Updated to port 3000
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                alert("Upload failed, try again!");
+            }
+        }
+    </script>
+
+</body>
+</html>
