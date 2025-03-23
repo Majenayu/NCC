@@ -338,7 +338,7 @@ app.get("/download-attendances", async (req, res) => {
 
 let gfs;
 db.once("open", () => {
-    gfs = Grid(conn.db, mongoose.mongo);
+    gfs = Grid(db.db, mongoose.mongo);
     gfs.collection("uploads");
     console.log("✅ GridFS is ready for file storage");
 });
