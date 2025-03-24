@@ -404,7 +404,7 @@ app.post("/upload", upload.array("images"), async (req, res) => {
     }
 });
 
-fs.unlinkSync(file.path); // Delete the temporary file
+
 
 
 
