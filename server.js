@@ -56,10 +56,6 @@ cloudinary.config({
 
 
 
-const ImageSchema = new mongoose.Schema({
-    date: String,
-    imageUrls: [String]
-});
 
 
 
