@@ -423,35 +423,45 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
 
 
-// Fetch all images
+// 📌 **Fetch Images from MongoDB**
 app.get("/images", async (req, res) => {
-  try {
-    const images = await ImageModel.find();
-    res.json(images);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching images", error });
-  }
+    try {
+        const images = await Image.find();
+        res.json(images);
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching images" });
+    }
 });
 
-// Replace an image
+// 📌 **Replace Image**
 app.post("/replace-image", upload.single("newImage"), async (req, res) => {
-  try {
-    const { oldImage, date } = req.body;
-    const newImage = req.file.path;
-    
-    await ImageModel.updateOne({ date }, { $pull: { images: oldImage } });
-    await ImageModel.updateOne({ date }, { $push: { images: newImage } });
+    try {
+        const { imageId, oldImage } = req.body;
 
-    // Delete old image from Cloudinary
-    const publicId = oldImage.split("/").pop().split(".")[0];
-    await cloudinary.uploader.destroy(publicId);
+        // Find existing image in DB
+        const imageData = await Image.findById(imageId);
+        if (!imageData) return res.status(404).json({ error: "Image not found" });
 
-    res.json({ message: "Image replaced successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Error replacing image", error });
-  }
+        // Delete old image from Cloudinary
+        await cloudinary.uploader.destroy(imageData.cloudinaryId);
+
+        // Upload new image to Cloudinary
+        const uploadResponse = await cloudinary.uploader.upload(req.file.path, { folder: "NCC_Images" });
+
+        // Update MongoDB with new image details
+        imageData.imageUrl = uploadResponse.secure_url;
+        imageData.cloudinaryId = uploadResponse.public_id;
+        await imageData.save();
+
+        // Delete temp file
+        fs.unlinkSync(req.file.path);
+
+        res.json({ message: "Image replaced successfully", newUrl: uploadResponse.secure_url });
+    } catch (error) {
+        console.error("Error replacing image:", error);
+        res.status(500).json({ error: "Error replacing image" });
+    }
 });
-
 
 // ✅ Start Server
 app.listen(PORT, () => {
