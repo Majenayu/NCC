@@ -392,28 +392,34 @@ app.post("/upload", upload.array("images"), async (req, res) => {
             return res.status(400).json({ message: "Date is required" });
         }
 
-        let uploadedImages = [];
+        // Find the existing entry for this date
+        const existingEntry = await ImageModel.findOne({ date });
 
-        // Upload each image to Cloudinary
+        if (existingEntry) {
+            // Delete existing images from Cloudinary before uploading new ones
+            for (const url of existingEntry.imageUrls) {
+                const publicId = url.split("/").pop().split(".")[0]; // Extract public ID
+                await cloudinary.uploader.destroy(`ncc_parade/${date}/${publicId}`);
+            }
+            // Remove from MongoDB
+            await ImageModel.deleteOne({ date });
+        }
+
+        let uploadedImages = [];
         const uploadPromises = req.files.map(async (file) => {
             const result = await cloudinary.uploader.upload(`data:image/png;base64,${file.buffer.toString("base64")}`, {
                 folder: `ncc_parade/${date}`,
             });
-            uploadedImages.push(result.secure_url);
+            uploadedImages.push(result.secure_url);S
             return result.secure_url;
         });
 
         await Promise.all(uploadPromises);
 
-        // Save to MongoDB
-        const newEntry = new ImageModel({
-            date: date,
-            imageUrls: uploadedImages
-        });
+        const newEntry = new ImageModel({ date, imageUrls: uploadedImages });
+        await newEntry.save();
 
-        await newEntry.save();  // Save the data
-
-        res.json({ message: "Images uploaded and saved successfully", urls: uploadedImages });
+        res.json({ message: "Images replaced successfully", urls: uploadedImages });
     } catch (error) {
         console.error("Upload failed:", error);
         res.status(500).json({ message: "Upload failed", error: error.message });
