@@ -8,6 +8,9 @@ const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const ExcelJS = require("exceljs");
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, WidthType } = require("docx");
 require("dotenv").config();
 
@@ -38,10 +41,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configure Cloudinary
 cloudinary.config({
-    cloud_name: "dcd0vatd4",
-    api_key: "242589938319122",
-    api_secret: "AwUqRsU3in6cp7HuHnTHecTlv_8"
+    cloud_name: process.env.dcd0vatd4,
+    api_key: process.env.242589938319122,
+    api_secret: process.env.AwUqRsU3in6cp7HuHnTHecTlv_8
 });
+
 
 
 
@@ -374,11 +378,16 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
         let uploadedImages = [];
         for (const file of req.files) {
-            const result = await cloudinary.uploader.upload(file.path, {
-                folder: `ncc_parade/${date}`
-            });
-            uploadedImages.push(result.secure_url);
-            fs.unlinkSync(file.path); // Delete the temporary file
+            const result = await cloudinary.uploader.upload_stream(
+                { folder: `ncc_parade/${date}` },
+                (error, result) => {
+                    if (error) {
+                        console.error("Cloudinary Upload Error:", error);
+                        return res.status(500).json({ message: "Cloudinary upload failed", error });
+                    }
+                    uploadedImages.push(result.secure_url);
+                }
+            ).end(file.buffer);
         }
 
         // Store in MongoDB
@@ -395,6 +404,9 @@ app.post("/upload", upload.array("images"), async (req, res) => {
         res.status(500).json({ message: "Upload failed", error: error.message });
     }
 });
+
+fs.unlinkSync(file.path); // Delete the temporary file
+
 
 
 // ✅ Start Server
