@@ -8,8 +8,7 @@ const path = require("path");
 const ExcelJS = require("exceljs");
 const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, WidthType } = require("docx");
 require("dotenv").config();
-const { GridFsStorage } = require("multer-gridfs-storage");
-const Grid = require("gridfs-stream");
+
 
 
 
@@ -28,27 +27,11 @@ mongoose
 // Use mongoose.connection instead of conn
 const db = mongoose.connection;
 
-// ✅ Initialize GridFS Bucket after MongoDB is connected
-db.once("open", () => {
-    bucket = new mongoose.mongo.GridFSBucket(db.db, { bucketName: "uploads" });
-    console.log("✅ GridFS Bucket Initialized");
-});
-
-// ✅ Multer Storage Setup
-const storage = new GridFsStorage({
-    url: MONGO_URI,
-    options: { useNewUrlParser: true, useUnifiedTopology: true },
-    file: (req, file) => {
-        return {
-            filename: `${Date.now()}-${file.originalname}`,
-            bucketName: "uploads",
-            metadata: { originalName: file.originalname }
-        };
-    },
-});
 
 
-const upload = multer({ storage });
+
+
+
 
 
 
@@ -357,44 +340,6 @@ app.get("/download-attendances", async (req, res) => {
         console.error("Error generating report:", err);
         res.status(500).send("Error generating report");
     }
-});
-
-
-let gfs;
-db.once("open", () => {
-    gfs = Grid(db.db, mongoose.mongo);
-    gfs.collection("uploads");
-    console.log("✅ GridFS is ready for file storage");
-});
-
-
-
-// ✅ Retrieve Image by ID
-app.get("/image/:id", async (req, res) => {
-    try {
-        if (!bucket) return res.status(500).json({ message: "❌ GridFS not initialized yet" });
-
-        const file = await db.collection("uploads.files").findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
-        if (!file) return res.status(404).json({ message: "❌ No image found" });
-
-        bucket.openDownloadStream(new mongoose.Types.ObjectId(req.params.id)).pipe(res);
-    } catch (error) {
-        res.status(500).json({ message: "❌ Error retrieving image" });
-    }
-});
-
-// ✅ Image Upload Route
-app.post("/upload", upload.array("images", 10), async (req, res) => {
-    console.log("Received files:", req.files); // Debugging log
-
-    if (!req.files || req.files.length === 0) {
-        return res.status(400).json({ message: "❌ No files uploaded" });
-    }
-
-    const imageIds = req.files.map(file => file.id);
-    console.log("Stored Image IDs:", imageIds); // Debugging log
-
-    res.status(201).json({ message: "✅ Images uploaded successfully", imageIds });
 });
 
 
