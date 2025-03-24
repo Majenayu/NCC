@@ -376,7 +376,7 @@ app.get("/download-attendances", async (req, res) => {
 
 
 const fs = require("fs");
-const path = require("path");
+
 
 app.post("/upload", upload.array("images"), async (req, res) => {
     try {
