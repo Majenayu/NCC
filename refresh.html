@@ -166,15 +166,25 @@
         imgWindow.document.write(`<img src="${imageUrl}" style="width:100%; height:100vh;">`);
     }
 
-  function downloadImage(imageUrl) {
-    const downloadUrl = imageUrl + "?fl_attachment=true";
-    const link = document.createElement("a");
-    link.href = downloadUrl;
-    link.download = "parade_image.jpg";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+async function downloadImage(imageUrl) {
+    try {
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "parade_image.jpg";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        window.URL.revokeObjectURL(url); // Clean up
+    } catch (error) {
+        console.error("Error downloading image:", error);
+    }
 }
+
 
 
     function replaceImage(oldImage, imageId) {
