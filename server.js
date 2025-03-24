@@ -391,23 +391,13 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
         let uploadedImages = [];
 
+        // Upload each image directly from memory (fixes ENOENT error)
         const uploadPromises = req.files.map(async (file) => {
-            const tempPath = path.join(__dirname, "temp", file.originalname);
-            fs.writeFileSync(tempPath, file.buffer); // Save buffer as a file
-
-            try {
-                const result = await cloudinary.uploader.upload(tempPath, {
-                    folder: `ncc_parade/${date}`
-                });
-
-                uploadedImages.push(result.secure_url);
-                return result.secure_url;
-            } catch (uploadError) {
-                console.error("Cloudinary Upload Error:", uploadError);
-                throw uploadError;
-            } finally {
-                fs.unlinkSync(tempPath); // Delete temp file after upload
-            }
+            const result = await cloudinary.uploader.upload(`data:image/png;base64,${file.buffer.toString("base64")}`, {
+                folder: `ncc_parade/${date}`,
+            });
+            uploadedImages.push(result.secure_url);
+            return result.secure_url;
         });
 
         await Promise.all(uploadPromises);
@@ -418,6 +408,7 @@ app.post("/upload", upload.array("images"), async (req, res) => {
         res.status(500).json({ message: "Upload failed", error: error.message });
     }
 });
+
 
 
 
