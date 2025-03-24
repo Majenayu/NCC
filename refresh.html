@@ -73,22 +73,24 @@
         }
 
         .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            justify-content: center;
-            align-items: center;
-        }
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+}
 
-        .modal-content {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 10px;
-        }
+.modal-content {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
 
         .back-home {
             position: fixed;
@@ -161,10 +163,20 @@
         }
     }
 
-    function openFullscreen(imageUrl) {
-        const imgWindow = window.open("", "_blank");
-        imgWindow.document.write(`<img src="${imageUrl}" style="width:100%; height:100vh;">`);
-    }
+   function openFullscreen(imageUrl) {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImg");
+
+    modal.style.display = "flex";  // Show modal
+    modalImg.src = imageUrl;       // Set image source
+}
+function closeFullscreen() {
+    document.getElementById("imageModal").style.display = "none";
+}
+<div id="imageModal" class="modal" onclick="closeFullscreen()">
+    <img id="modalImg" class="modal-content">
+</div>
+
 
 async function downloadImage(imageUrl) {
     try {
