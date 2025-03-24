@@ -56,12 +56,12 @@ const ImageSchema = new mongoose.Schema({
 
 
 
-// Serve static files from the 'public' folder
-app.use(express.static(path.join(__dirname, "public")));
+// Serve static files (CSS, JS, images) if needed
+app.use(express.static(__dirname));
 
-// Default route to serve index.html
+// Route to serve index.html
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+    res.sendFile(path.join(__dirname, "index.html")); // Adjust path if needed
 });
 
 
