@@ -422,6 +422,37 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
 
 
+
+// Fetch all images
+app.get("/images", async (req, res) => {
+  try {
+    const images = await ImageModel.find();
+    res.json(images);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching images", error });
+  }
+});
+
+// Replace an image
+app.post("/replace-image", upload.single("newImage"), async (req, res) => {
+  try {
+    const { oldImage, date } = req.body;
+    const newImage = req.file.path;
+    
+    await ImageModel.updateOne({ date }, { $pull: { images: oldImage } });
+    await ImageModel.updateOne({ date }, { $push: { images: newImage } });
+
+    // Delete old image from Cloudinary
+    const publicId = oldImage.split("/").pop().split(".")[0];
+    await cloudinary.uploader.destroy(publicId);
+
+    res.json({ message: "Image replaced successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error replacing image", error });
+  }
+});
+
+
 // ✅ Start Server
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}/`);
