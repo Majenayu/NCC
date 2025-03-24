@@ -410,7 +410,7 @@ app.post("/upload", upload.array("images"), async (req, res) => {
             const result = await cloudinary.uploader.upload(`data:image/png;base64,${file.buffer.toString("base64")}`, {
                 folder: `ncc_parade/${date}`,
             });
-            uploadedImages.push(result.secure_url);S
+            uploadedImages.push(result.secure_url);
             return result.secure_url;
         });
 
