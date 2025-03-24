@@ -378,6 +378,13 @@ app.get("/download-attendances", async (req, res) => {
 const fs = require("fs");
 
 
+const ImageSchema = new mongoose.Schema({
+    date: String,
+    imageUrls: [String]  // Array to store multiple image URLs
+});
+
+const ImageModel = mongoose.model("Image", ImageSchema);
+
 app.post("/upload", upload.array("images"), async (req, res) => {
     try {
         if (!req.files || req.files.length === 0) {
@@ -391,7 +398,7 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
         let uploadedImages = [];
 
-        // Upload each image directly from memory (fixes ENOENT error)
+        // Upload each image to Cloudinary
         const uploadPromises = req.files.map(async (file) => {
             const result = await cloudinary.uploader.upload(`data:image/png;base64,${file.buffer.toString("base64")}`, {
                 folder: `ncc_parade/${date}`,
@@ -402,14 +409,20 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
         await Promise.all(uploadPromises);
 
-        res.json({ message: "Images uploaded successfully", urls: uploadedImages });
+        // Save to MongoDB
+        const newEntry = new ImageModel({
+            date: date,
+            imageUrls: uploadedImages
+        });
+
+        await newEntry.save();  // Save the data
+
+        res.json({ message: "Images uploaded and saved successfully", urls: uploadedImages });
     } catch (error) {
         console.error("Upload failed:", error);
         res.status(500).json({ message: "Upload failed", error: error.message });
     }
 });
-
-
 
 
 
