@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #000080, #87CEEB);
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+    
+
+        button {
+            background: linear-gradient(to right, #56ab2f, #697a0b);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    justify-content: center;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    background: #222;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    width: 150px;
+    height: auto;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.date-label {
+    margin-top: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    color: yellow;
+}
+
+.download-btn, .replace-btn {
+    margin-top: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+.download-btn {
+    background: green;
+    color: white;
+}
+
+.replace-btn {
+    background: orange;
+    color: black;
+}
+
+/* Fullscreen Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+}
+/* Back to Home Button - Fixed to Top Right */
+.back-home {
+    position: fixed; /* Stays at the top-right even when scrolling */
+    top: 20px; /* Adjusted from 1000px */
+    right: 20px; /* Adjusted from 0px */
+    text-decoration: none;
+    font-size: 18px;
+    color: #ffffff;
+    font-weight: bold;
+    background-color: #007BFF;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+
+        button:hover {
+            background: linear-gradient(to right, #697a0b, #56ab2f);
+        }
+    </style>
+</head>
+<body>
+    <h2>Uploaded Images</h2>
+    <div class="gallery" id="gallery"></div>
+    <button onclick="fetchImages()">Refresh Images</button>
+    <a href="home.html" class="back-home">🏠 Home</a>
+    <script>
+        async function fetchImages() {
+            try {
+                const response = await fetch("/images");
+                const data = await response.json();
+    
+                const gallery = document.getElementById("gallery");
+                gallery.innerHTML = ""; // Clear previous images
+    
+                if (!data.length) {
+                    gallery.innerHTML = "<p>No images found</p>";
+                    return;
+                }
+    
+                data.forEach(entry => {
+                    entry.images.forEach(image => {
+                        // Create container for each image + date + buttons
+                        const imgContainer = document.createElement("div");
+                        imgContainer.classList.add("image-container");
+    
+                        // Create image element
+                        const imgElement = document.createElement("img");
+                        imgElement.src = image;
+                        imgElement.onclick = () => openFullscreen(image);
+    
+                        // Create date label below image
+                        const dateLabel = document.createElement("p");
+                        dateLabel.textContent = `📅 ${entry.date}`;
+                        dateLabel.classList.add("date-label");
+    
+                        // Create Download button
+                        const downloadBtn = document.createElement("button");
+                        downloadBtn.textContent = "📥 Download";
+                        downloadBtn.classList.add("download-btn");
+                        downloadBtn.onclick = () => downloadImage(image);
+    
+                        // Create Replace button
+                        const replaceBtn = document.createElement("button");
+                        replaceBtn.textContent = "🔄 Replace";
+                        replaceBtn.classList.add("replace-btn");
+                        replaceBtn.onclick = () => replaceImage(image, entry.date);
+    
+                        // Append elements to container
+                        imgContainer.appendChild(imgElement);
+                        imgContainer.appendChild(dateLabel);
+                        imgContainer.appendChild(downloadBtn);
+                        imgContainer.appendChild(replaceBtn);
+                        gallery.appendChild(imgContainer);
+                    });
+                });
+            } catch (error) {
+                console.error("Error fetching images:", error);
+                document.getElementById("gallery").innerHTML = "<p>Error loading images</p>";
+            }
+        }
+    
+        // Open image in fullscreen
+        function openFullscreen(imageSrc) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("modalImg");
+            modal.style.display = "flex";
+            modalImg.src = imageSrc;
+        }
+    
+        // Close fullscreen modal
+        function closeFullscreen() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+    
+        // Download image
+        function downloadImage(imageUrl) {
+            const link = document.createElement("a");
+            link.href = imageUrl;
+            link.download = imageUrl.split("/").pop(); // Extract file name
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    
+        // Replace image
+        function replaceImage(oldImage, date) {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
+    
+            input.onchange = async (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+    
+                const formData = new FormData();
+                formData.append("newImage", file);
+                formData.append("oldImage", oldImage);
+                formData.append("date", date);
+    
+                try {
+                    const response = await fetch("/replace-image", {
+                        method: "POST",
+                        body: formData
+                    });
+    
+                    const result = await response.json();
+                    alert(result.message);
+                    fetchImages(); // Refresh images after replacement
+                } catch (error) {
+                    console.error("Error replacing image:", error);
+                }
+            };
+    
+            input.click();
+        }
+    
+        // Fetch images on page load
+        fetchImages();
+    </script>
+    
+    
+
+
+
+<!-- Fullscreen Image Modal -->
+<div id="imageModal" class="modal" onclick="closeFullscreen()">
+    <img id="modalImg" class="modal-content">
+</div>
+
+
+    
+    
+</body>
+</html>
