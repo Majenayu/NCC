@@ -422,47 +422,49 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
 
 
-
-// 📌 **Fetch Images from MongoDB**
+// Fetch Images
 app.get("/images", async (req, res) => {
-    try {
-        const images = await Image.find();
-        res.json(images);
-    } catch (error) {
-        res.status(500).json({ error: "Error fetching images" });
-    }
+  try {
+    const images = await ImageModel.find();
+    res.json(images);
+  } catch (error) {
+    console.error("Error fetching images:", error);
+    res.status(500).json({ message: "Error fetching images" });
+  }
 });
 
-// 📌 **Replace Image**
+// Replace Image
 app.post("/replace-image", upload.single("newImage"), async (req, res) => {
-    try {
-        const { imageId, oldImage } = req.body;
-
-        // Find existing image in DB
-        const imageData = await Image.findById(imageId);
-        if (!imageData) return res.status(404).json({ error: "Image not found" });
-
-        // Delete old image from Cloudinary
-        await cloudinary.uploader.destroy(imageData.cloudinaryId);
-
-        // Upload new image to Cloudinary
-        const uploadResponse = await cloudinary.uploader.upload(req.file.path, { folder: "NCC_Images" });
-
-        // Update MongoDB with new image details
-        imageData.imageUrl = uploadResponse.secure_url;
-        imageData.cloudinaryId = uploadResponse.public_id;
-        await imageData.save();
-
-        // Delete temp file
-        fs.unlinkSync(req.file.path);
-
-        res.json({ message: "Image replaced successfully", newUrl: uploadResponse.secure_url });
-    } catch (error) {
-        console.error("Error replacing image:", error);
-        res.status(500).json({ error: "Error replacing image" });
+  try {
+    const { oldImage, imageId } = req.body;
+    if (!req.file || !oldImage || !imageId) {
+      return res.status(400).json({ message: "Missing required data" });
     }
-});
 
+    // Delete old image from Cloudinary
+    const publicId = oldImage.split("/").pop().split(".")[0];
+    await cloudinary.uploader.destroy(publicId);
+
+    // Upload new image to Cloudinary
+    const newImageUrl = await cloudinary.uploader.upload(
+      `data:image/png;base64,${req.file.buffer.toString("base64")}`,
+      { folder: "ncc_parade" }
+    );
+
+    // Update MongoDB
+    await ImageModel.findByIdAndUpdate(imageId, {
+      $set: { "imageUrls.$[elem]": newImageUrl.secure_url }
+    }, {
+      arrayFilters: [{ "elem": oldImage }],
+      new: true
+    });
+
+    res.json({ message: "Image replaced successfully", newUrl: newImageUrl.secure_url });
+  } catch (error) {
+    console.error("Error replacing image:", error);
+    res.status(500).json({ message: "Error replacing image" });
+  }
+});
 // ✅ Start Server
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}/`);
