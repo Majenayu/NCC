@@ -366,8 +366,7 @@ app.get("/download-attendances", async (req, res) => {
 
 
 
-// Multer storage for temporary file handling
-const upload = multer({ dest: "uploads/" });
+
 
 app.post("/upload", upload.array("images"), async (req, res) => {
     try {
