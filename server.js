@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const multer = require("multer");
 const bcrypt = require("bcryptjs");
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const ExcelJS = require("exceljs");
@@ -29,20 +31,27 @@ const db = mongoose.connection;
 
 
 
-
-
-
-
-
-
-
-
 // Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.static(path.join(__dirname))); // Serve static files (HTML, CSS, JS)
+
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: "dcd0vatd4",
+    api_key: "242589938319122",
+    api_secret: "AwUqRsU3in6cp7HuHnTHecTlv_8"
+});
+
+
+
+const ImageSchema = new mongoose.Schema({
+    date: String,
+    imageUrls: [String]
+});
+
+
+
 
 
 
@@ -342,6 +351,42 @@ app.get("/download-attendances", async (req, res) => {
     }
 });
 
+
+
+
+// Multer storage for temporary file handling
+const upload = multer({ dest: "uploads/" });
+
+app.post("/upload", upload.array("images"), async (req, res) => {
+    try {
+        const date = req.body.date;
+        if (!date) {
+            return res.status(400).json({ message: "Date is required" });
+        }
+
+        let uploadedImages = [];
+        for (const file of req.files) {
+            const result = await cloudinary.uploader.upload(file.path, {
+                folder: `ncc_parade/${date}`
+            });
+            uploadedImages.push(result.secure_url);
+            fs.unlinkSync(file.path); // Delete the temporary file
+        }
+
+        // Store in MongoDB
+        let existingEntry = await ImageModel.findOne({ date });
+        if (existingEntry) {
+            existingEntry.imageUrls.push(...uploadedImages);
+            await existingEntry.save();
+        } else {
+            await ImageModel.create({ date, imageUrls: uploadedImages });
+        }
+
+        res.json({ message: "Images uploaded successfully", urls: uploadedImages });
+    } catch (error) {
+        res.status(500).json({ message: "Upload failed", error: error.message });
+    }
+});
 
 
 // ✅ Start Server
