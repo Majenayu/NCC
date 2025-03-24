@@ -424,14 +424,14 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
 // Fetch Images
 app.get("/images", async (req, res) => {
-  try {
-    const images = await ImageModel.find();
-    res.json(images);
-  } catch (error) {
-    console.error("Error fetching images:", error);
-    res.status(500).json({ message: "Error fetching images" });
-  }
+    try {
+        const images = await ImageModel.find();
+        res.json(images);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching images" });
+    }
 });
+
 
 // Replace Image
 app.post("/replace-image", upload.single("newImage"), async (req, res) => {
