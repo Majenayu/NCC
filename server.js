@@ -9,7 +9,10 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const ExcelJS = require("exceljs");
 const storage = multer.memoryStorage();
-const upload = multer({ storage });
+
+const upload = multer({ storage: multer.memoryStorage() }); // Storing files in memory
+
+const { Readable } = require("stream");
 
 const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, WidthType } = require("docx");
 require("dotenv").config();
@@ -376,18 +379,28 @@ app.post("/upload", upload.array("images"), async (req, res) => {
         }
 
         let uploadedImages = [];
-        for (const file of req.files) {
-            const result = await cloudinary.uploader.upload_stream(
-                { folder: `ncc_parade/${date}` },
-                (error, result) => {
-                    if (error) {
-                        console.error("Cloudinary Upload Error:", error);
-                        return res.status(500).json({ message: "Cloudinary upload failed", error });
+
+        // Convert upload process into promises
+        const uploadPromises = req.files.map((file) => {
+            return new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: `ncc_parade/${date}` },
+                    (error, result) => {
+                        if (error) {
+                            console.error("Cloudinary Upload Error:", error);
+                            reject(error);
+                        } else {
+                            uploadedImages.push(result.secure_url);
+                            resolve(result.secure_url);
+                        }
                     }
-                    uploadedImages.push(result.secure_url);
-                }
-            ).end(file.buffer);
-        }
+                );
+                Readable.from(file.buffer).pipe(stream);
+            });
+        });
+
+        // Wait for all images to be uploaded
+        await Promise.all(uploadPromises);
 
         // Store in MongoDB
         let existingEntry = await ImageModel.findOne({ date });
@@ -403,8 +416,6 @@ app.post("/upload", upload.array("images"), async (req, res) => {
         res.status(500).json({ message: "Upload failed", error: error.message });
     }
 });
-
-
 
 
 
