@@ -41,9 +41,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Configure Cloudinary
 cloudinary.config({
-    cloud_name: process.env.dcd0vatd4,
-    api_key: process.env.242589938319122,
-    api_secret: process.env.AwUqRsU3in6cp7HuHnTHecTlv_8
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 
