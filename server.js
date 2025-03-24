@@ -43,10 +43,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Configure Cloudinary
+
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    cloudinary_url: process.env.CLOUDINARY_URL
 });
 
 
@@ -373,6 +372,10 @@ app.get("/download-attendances", async (req, res) => {
 
 app.post("/upload", upload.array("images"), async (req, res) => {
     try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: "No files uploaded" });
+        }
+
         const date = req.body.date;
         if (!date) {
             return res.status(400).json({ message: "Date is required" });
@@ -380,10 +383,10 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
         let uploadedImages = [];
 
-        // Convert upload process into promises
+        // Use Promises to handle async uploads
         const uploadPromises = req.files.map((file) => {
             return new Promise((resolve, reject) => {
-                const stream = cloudinary.uploader.upload_stream(
+                cloudinary.uploader.upload_stream(
                     { folder: `ncc_parade/${date}` },
                     (error, result) => {
                         if (error) {
@@ -394,25 +397,15 @@ app.post("/upload", upload.array("images"), async (req, res) => {
                             resolve(result.secure_url);
                         }
                     }
-                );
-                Readable.from(file.buffer).pipe(stream);
+                ).end(file.buffer);
             });
         });
 
-        // Wait for all images to be uploaded
         await Promise.all(uploadPromises);
-
-        // Store in MongoDB
-        let existingEntry = await ImageModel.findOne({ date });
-        if (existingEntry) {
-            existingEntry.imageUrls.push(...uploadedImages);
-            await existingEntry.save();
-        } else {
-            await ImageModel.create({ date, imageUrls: uploadedImages });
-        }
 
         res.json({ message: "Images uploaded successfully", urls: uploadedImages });
     } catch (error) {
+        console.error("Upload failed:", error);
         res.status(500).json({ message: "Upload failed", error: error.message });
     }
 });
