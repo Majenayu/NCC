@@ -375,6 +375,9 @@ app.get("/download-attendances", async (req, res) => {
 
 
 
+const fs = require("fs");
+const path = require("path");
+
 app.post("/upload", upload.array("images"), async (req, res) => {
     try {
         if (!req.files || req.files.length === 0) {
@@ -388,13 +391,23 @@ app.post("/upload", upload.array("images"), async (req, res) => {
 
         let uploadedImages = [];
 
-        // Use Promises to handle async uploads
         const uploadPromises = req.files.map(async (file) => {
-            const result = await cloudinary.uploader.upload(`data:image/png;base64,${file.buffer.toString("base64")}`, {
-                folder: `ncc_parade/${date}`
-            });
-            uploadedImages.push(result.secure_url);
-            return result.secure_url;
+            const tempPath = path.join(__dirname, "temp", file.originalname);
+            fs.writeFileSync(tempPath, file.buffer); // Save buffer as a file
+
+            try {
+                const result = await cloudinary.uploader.upload(tempPath, {
+                    folder: `ncc_parade/${date}`
+                });
+
+                uploadedImages.push(result.secure_url);
+                return result.secure_url;
+            } catch (uploadError) {
+                console.error("Cloudinary Upload Error:", uploadError);
+                throw uploadError;
+            } finally {
+                fs.unlinkSync(tempPath); // Delete temp file after upload
+            }
         });
 
         await Promise.all(uploadPromises);
