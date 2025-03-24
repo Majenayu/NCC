@@ -166,14 +166,16 @@
         imgWindow.document.write(`<img src="${imageUrl}" style="width:100%; height:100vh;">`);
     }
 
-    function downloadImage(imageUrl) {
-        const link = document.createElement("a");
-        link.href = imageUrl;
-        link.download = "parade_image.jpg";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+  function downloadImage(imageUrl) {
+    const downloadUrl = imageUrl + "?fl_attachment=true";
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = "parade_image.jpg";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 
     function replaceImage(oldImage, imageId) {
         const input = document.createElement("input");
