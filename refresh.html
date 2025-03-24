@@ -133,7 +133,8 @@
                     imgContainer.classList.add("image-container");
 
                     const imgElement = document.createElement("img");
-                    imgElement.src = entry.imageUrl;
+                imgElement.src = entry.imageUrls[0]; // ✅ Correct if each entry has multiple images
+
                     imgElement.onclick = () => openFullscreen(entry.imageUrl);
 
                     const dateLabel = document.createElement("p");
