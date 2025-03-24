@@ -56,9 +56,14 @@ const ImageSchema = new mongoose.Schema({
 
 
 
+// Serve static files from the 'public' folder
+app.use(express.static(path.join(__dirname, "public")));
+
+// Default route to serve index.html
 app.get("/", (req, res) => {
-    res.send("NCC Attendance API is Running!");
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+
 
 
 
