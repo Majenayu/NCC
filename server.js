@@ -4,7 +4,7 @@ const cors = require("cors");
 const multer = require("multer");
 const bcrypt = require("bcryptjs");
 
-const fs = require("fs");
+
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const ExcelJS = require("exceljs");
