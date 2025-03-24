@@ -115,6 +115,9 @@
     <div class="gallery" id="gallery"></div>
     <button onclick="fetchImages()">Refresh Images</button>
     <a href="home.html" class="back-home">🏠 Home</a>
+    <div id="imageModal" class="modal" onclick="closeFullscreen()">
+    <img id="modalImg" class="modal-content">
+</div>
 
    <script>
     async function fetchImages() {
@@ -173,9 +176,7 @@
 function closeFullscreen() {
     document.getElementById("imageModal").style.display = "none";
 }
-<div id="imageModal" class="modal" onclick="closeFullscreen()">
-    <img id="modalImg" class="modal-content">
-</div>
+
 
 
 async function downloadImage(imageUrl) {
