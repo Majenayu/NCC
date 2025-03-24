@@ -12,9 +12,6 @@ const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, WidthT
 require("dotenv").config();
 
 
-app.get("/", (req, res) => {
-    res.send("NCC Attendance API is Running!");
-});
 
 
 const app = express();
@@ -59,6 +56,9 @@ const ImageSchema = new mongoose.Schema({
 
 
 
+app.get("/", (req, res) => {
+    res.send("NCC Attendance API is Running!");
+});
 
 
 
