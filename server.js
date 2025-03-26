@@ -398,7 +398,7 @@ app.post("/upload", upload.array("images", 5), async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = app;
 
 
 // Fetch Images
