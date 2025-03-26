@@ -483,9 +483,47 @@ app.post("/replace-image", upload.single("newImage"), async (req, res) => {
     });
 
     // Update MongoDB by replacing the old image URL with the new one
+
+
+// Replace Image
+app.post("/replace-image", upload.single("newImage"), async (req, res) => {
+  try {
+    let { oldImage, imageId } = req.body;
+
+    // Validate required fields
+    if (!req.file || !oldImage || !imageId) {
+      return res.status(400).json({ message: "Missing required data" });
+    }
+
+    // Ensure `imageId` is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(imageId)) {
+      return res.status(400).json({ message: "Invalid imageId format" });
+    }
+
+    // Convert `imageId` to ObjectId
+    imageId = new mongoose.Types.ObjectId(imageId);
+
+    // Extract Cloudinary public ID (safe method)
+    const publicId = oldImage.split("/").slice(-2).join("/").split(".")[0];
+
+    // Delete old image from Cloudinary
+    await cloudinary.uploader.destroy(publicId);
+
+    // Upload new image to Cloudinary in the same folder
+    const uploadResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: "ncc_parade" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(req.file.buffer);
+    });
+
+    // Update MongoDB by replacing old image URL with the new one
     const updatedDoc = await ImageModel.findOneAndUpdate(
-      { _id: imageId, imageUrls: oldImage }, // Find document where imageUrls contains oldImage
-      { $set: { "imageUrls.$": uploadResult.secure_url } }, // Replace that specific image
+      { _id: imageId, imageUrls: oldImage }, // Ensure correct document is found
+      { $set: { "imageUrls.$": uploadResult.secure_url } }, // Replace specific image
       { new: true }
     );
 
@@ -496,9 +534,10 @@ app.post("/replace-image", upload.single("newImage"), async (req, res) => {
     res.json({ message: "Image replaced successfully", newUrl: uploadResult.secure_url });
   } catch (error) {
     console.error("Error replacing image:", error);
-    res.status(500).json({ message: "Error replacing image" });
+    res.status(500).json({ message: "Error replacing image", error: error.message });
   }
 });
+
 
 // ✅ Start Server
 app.listen(PORT, () => {
