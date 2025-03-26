@@ -250,12 +250,15 @@ async function downloadImage(imageUrl) {
 }
 
 async function replaceImage(oldImage, imageId) {
-    const fileInput = document.getElementById("newImageInput");
-
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.style.display = "none";
+    document.body.appendChild(fileInput);
+    
     // Open file selection dialog
     fileInput.click();
 
-    // Wait for the user to choose a file
     fileInput.onchange = async () => {
         const newImageFile = fileInput.files[0];
         if (!newImageFile) return;
@@ -280,6 +283,8 @@ async function replaceImage(oldImage, imageId) {
             }
         } catch (error) {
             console.error("Error replacing image:", error);
+        } finally {
+            document.body.removeChild(fileInput); // Cleanup
         }
     };
 }
