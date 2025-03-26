@@ -378,10 +378,11 @@ const ImageSchema = new mongoose.Schema({
     date: String,
     imageUrls: [String]  // Array to store multiple image URLs
 });
-
+// Multer storage for temporary file handling
+const upload = multer({ dest: "uploads/" });
 const ImageModel = mongoose.model("Image", ImageSchema);
 // Upload Route
-router.post("/upload", upload.array("images", 5), async (req, res) => {
+app.post("/upload", upload.array("images", 5), async (req, res) => {
     try {
         const imageUrls = req.files.map(file => file.path); // Get uploaded image URLs
         const { date } = req.body;
