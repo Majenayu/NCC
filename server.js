@@ -473,59 +473,53 @@ app.get("/images", async (req, res) => {
 
 
 
-
-// Replace Image
 app.post("/replace-image", upload.single("newImage"), async (req, res) => {
-  try {
-    let { oldImage, imageId } = req.body;
+    try {
+        let { oldImage, imageId } = req.body;
 
-    // Validate required fields
-    if (!req.file || !oldImage || !imageId) {
-      return res.status(400).json({ message: "Missing required data" });
-    }
-
-    // Ensure `imageId` is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(imageId)) {
-      return res.status(400).json({ message: "Invalid imageId format" });
-    }
-
-    // Convert `imageId` to ObjectId
-    imageId = new mongoose.Types.ObjectId(imageId);
-
-    // Extract Cloudinary public ID (safe method)
-    const publicId = oldImage.split("/").slice(-2).join("/").split(".")[0];
-
-    // Delete old image from Cloudinary
-    await cloudinary.uploader.destroy(publicId);
-
-    // Upload new image to Cloudinary in the same folder as old one
-    const folderPath = oldImage.split("/").slice(-3, -1).join("/"); // Extract correct folder path
-    const uploadResult = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        { folder: folderPath },  // Ensures the same upload folder is used
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
+        if (!req.file || !oldImage || !imageId) {
+            return res.status(400).json({ message: "Missing required data" });
         }
-      ).end(req.file.buffer);
-    });
 
-    // Replace only the specific old image in MongoDB (keeping other images intact)
-    const updatedDoc = await ImageModel.findOneAndUpdate(
-      { _id: imageId, imageUrls: oldImage }, // Find document with matching image URL
-      { $set: { "imageUrls.$": uploadResult.secure_url } }, // Replace only that image
-      { new: true }
-    );
+        if (!mongoose.Types.ObjectId.isValid(imageId)) {
+            return res.status(400).json({ message: "Invalid imageId format" });
+        }
 
-    if (!updatedDoc) {
-      return res.status(404).json({ message: "Image not found in database" });
+        imageId = new mongoose.Types.ObjectId(imageId);
+
+        // Extract Cloudinary public ID
+        const publicId = oldImage.split("/").slice(-2).join("/").split(".")[0];
+
+        // Delete the old image from Cloudinary
+        await cloudinary.uploader.destroy(publicId);
+
+        // Upload new image to Cloudinary in 'replace' folder
+        const uploadResult = await new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+                { folder: "replace" }, // Ensure new images go into 'replace' folder
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            ).end(req.file.buffer);
+        });
+
+        // Replace old image URL with new one in MongoDB
+        const updatedDoc = await ImageModel.findOneAndUpdate(
+            { _id: imageId, imageUrls: oldImage },
+            { $set: { "imageUrls.$": uploadResult.secure_url } }, // Updates only the matched image in array
+            { new: true }
+        );
+
+        if (!updatedDoc) {
+            return res.status(404).json({ message: "Image not found in database" });
+        }
+
+        res.json({ message: "Image replaced successfully", newUrl: uploadResult.secure_url });
+    } catch (error) {
+        console.error("Error replacing image:", error);
+        res.status(500).json({ message: "Error replacing image", error: error.message });
     }
-
-    res.json({ message: "Image replaced successfully", newUrl: uploadResult.secure_url });
-  } catch (error) {
-    console.error("Error replacing image:", error);
-    res.status(500).json({ message: "Error replacing image", error: error.message });
-  }
 });
 
 
