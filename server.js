@@ -431,14 +431,22 @@ module.exports = app;
 app.get("/images", async (req, res) => {
     try {
         const images = await ImageModel.find();
-        
-        // Structure images by date
-        const groupedImages = images.map(entry => ({
-            date: entry.date, 
-            images: entry.imageUrls // List of image URLs
+
+        // Group images by date
+        const groupedImages = images.reduce((acc, entry) => {
+            if (!acc[entry.date]) {
+                acc[entry.date] = [];
+            }
+            acc[entry.date].push(entry.imageUrl); // Ensure this matches your schema
+            return acc;
+        }, {});
+
+        const formattedData = Object.keys(groupedImages).map(date => ({
+            date,
+            images: groupedImages[date]
         }));
 
-        res.json({ data: groupedImages });
+        res.json({ data: formattedData });
     } catch (error) {
         console.error("Error fetching images:", error);
         res.status(500).json({ message: "Error fetching images" });
