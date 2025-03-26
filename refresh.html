@@ -190,15 +190,16 @@ entry.images.forEach(imageUrl => {
                 downloadBtn.classList.add("download-btn");
                 downloadBtn.onclick = () => downloadImage(imageUrl);
 
-                const replaceBtn = document.createElement("button");
+       const replaceBtn = document.createElement("button");
 replaceBtn.textContent = "🔄 Replace";
 replaceBtn.classList.add("replace-btn");
 
-if (entry._id) { // ✅ Ensure the ID exists before passing
+if (entry._id) { // Ensure the ID exists before assigning the function
     replaceBtn.onclick = () => replaceImage(imageUrl, entry._id);
 } else {
-    console.error("Missing imageId for image:", imageUrl);
+    console.error("❌ Missing imageId for image:", imageUrl);
 }
+
 
 
                 imgContainer.appendChild(imgElement);
@@ -250,6 +251,12 @@ async function downloadImage(imageUrl) {
 }
 
 async function replaceImage(oldImage, imageId) {
+        if (!imageId) {
+        console.error("❌ replaceImage() called without an imageId!");
+        alert("Error: Image ID is missing!");
+        return;
+    }
+
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = "image/*";
@@ -287,6 +294,7 @@ async function replaceImage(oldImage, imageId) {
             document.body.removeChild(fileInput); // Cleanup
         }
     };
+        fileInput.click(); // 🔹 Trigger file selection dialog
 }
   
 
