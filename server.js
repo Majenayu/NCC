@@ -382,45 +382,39 @@ const ImageSchema = new mongoose.Schema({
 
 const ImageModel = mongoose.model("Image", ImageSchema);
 // Upload Route
+app.post("/upload", upload.array("images"), async (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: "No files uploaded" });
+        }
 
- app.post("/upload", upload.array("images"), async (req, res) => {
-     try {
-         if (!req.files || req.files.length === 0) {
-             return res.status(400).json({ message: "No files uploaded" });
-         }
- 
-         const date = req.body.date;
-         if (!date) {
-             return res.status(400).json({ message: "Date is required" });
-         }
- 
-         // Find the existing entry for this date
-         const existingEntry = await ImageModel.findOne({ date });
- 
-         if (existingEntry) {
-             // Delete existing images from Cloudinary before uploading new ones
-             for (const url of existingEntry.imageUrls) {
-                 const publicId = url.split("/").pop().split(".")[0]; // Extract public ID
-                 await cloudinary.uploader.destroy(`ncc_parade/${date}/${publicId}`);
-             }
-             // Remove from MongoDB
-             await ImageModel.deleteOne({ date });
-         }
- 
-         let uploadedImages = [];
-         const uploadPromises = req.files.map(async (file) => {
-             const result = await cloudinary.uploader.upload(`data:image/png;base64,${file.buffer.toString("base64")}`, {
-                 folder: `ncc_parade/${date}`,
-             });
-             uploadedImages.push(result.secure_url);
-             
-             return result.secure_url;
-         });
-           await Promise.all(uploadPromises); // Wait for all uploads to complete
+        const date = req.body.date;
+        if (!date) {
+            return res.status(400).json({ message: "Date is required" });
+        }
 
-        // Save new entry in MongoDB
-        const newEntry = new ImageModel({ date, imageUrls: uploadedImages });
-        await newEntry.save();
+        // Find the existing entry for this date
+        let existingEntry = await ImageModel.findOne({ date });
+
+        let uploadedImages = [];
+        const uploadPromises = req.files.map(async (file) => {
+            const result = await cloudinary.uploader.upload(`data:image/png;base64,${file.buffer.toString("base64")}`, {
+                folder: `ncc_parade/${date}`,
+            });
+            uploadedImages.push(result.secure_url);
+        });
+
+        await Promise.all(uploadPromises); // Wait for all uploads to complete
+
+        if (existingEntry) {
+            // Append new images to the existing list
+            existingEntry.imageUrls.push(...uploadedImages);
+            await existingEntry.save();
+        } else {
+            // Create a new entry if it doesn't exist
+            const newEntry = new ImageModel({ date, imageUrls: uploadedImages });
+            await newEntry.save();
+        }
 
         res.json({ message: "Upload successful!", images: uploadedImages });
     } catch (error) {
@@ -428,6 +422,7 @@ const ImageModel = mongoose.model("Image", ImageSchema);
         res.status(500).json({ message: "Upload failed!" });
     }
 });
+
 
 module.exports = app;
 
