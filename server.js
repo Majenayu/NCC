@@ -457,32 +457,6 @@ app.get("/images", async (req, res) => {
 
 
 
-// Replace Image
-app.post("/replace-image", upload.single("newImage"), async (req, res) => {
-  try {
-    const { oldImage, imageId } = req.body;
-    if (!req.file || !oldImage || !imageId) {
-      return res.status(400).json({ message: "Missing required data" });
-    }
-
-    // Extract public ID correctly from Cloudinary URL
-    const publicId = oldImage.split("/").slice(-2).join("/").split(".")[0]; 
-
-    // Delete old image from Cloudinary
-    await cloudinary.uploader.destroy(publicId);
-
-    // Upload new image to Cloudinary in the same folder as the original
-    const uploadResult = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        { folder: "ncc_parade" },  // Ensure it's uploaded to the same folder
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      ).end(req.file.buffer);
-    });
-
-    // Update MongoDB by replacing the old image URL with the new one
 
 
 // Replace Image
@@ -537,7 +511,6 @@ app.post("/replace-image", upload.single("newImage"), async (req, res) => {
     res.status(500).json({ message: "Error replacing image", error: error.message });
   }
 });
-
 
 // ✅ Start Server
 app.listen(PORT, () => {
