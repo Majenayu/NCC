@@ -193,9 +193,15 @@
                 downloadBtn.onclick = () => downloadImage(imageUrl);
 
                 const replaceBtn = document.createElement("button");
-                replaceBtn.textContent = "🔄 Replace";
-                replaceBtn.classList.add("replace-btn");
-                replaceBtn.onclick = () => replaceImage(imageUrl, entry._id);
+replaceBtn.textContent = "🔄 Replace";
+replaceBtn.classList.add("replace-btn");
+
+if (entry._id) { // ✅ Ensure the ID exists before passing
+    replaceBtn.onclick = () => replaceImage(imageUrl, entry._id);
+} else {
+    console.error("Missing imageId for image:", imageUrl);
+}
+
 
                 imgContainer.appendChild(imgElement);
                 imgContainer.appendChild(downloadBtn);
