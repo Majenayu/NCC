@@ -379,7 +379,7 @@ const ImageSchema = new mongoose.Schema({
     imageUrls: [String]  // Array to store multiple image URLs
 });
 // Multer storage for temporary file handling
-const upload = multer({ dest: "uploads/" });
+
 const ImageModel = mongoose.model("Image", ImageSchema);
 // Upload Route
 app.post("/upload", upload.array("images", 5), async (req, res) => {
