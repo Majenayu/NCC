@@ -380,32 +380,24 @@ const ImageSchema = new mongoose.Schema({
 });
 
 const ImageModel = mongoose.model("Image", ImageSchema);
-app.post('/upload-image', upload.single('image'), async (req, res) => {
+// Upload Route
+router.post("/upload", upload.array("images", 5), async (req, res) => {
     try {
+        const imageUrls = req.files.map(file => file.path); // Get uploaded image URLs
         const { date } = req.body;
-        const imageUrl = req.file.path; // Assuming Cloudinary or local storage
 
-        let existingEntry = await ImageModel.findOne({ date });
+        // Save to MongoDB (adjust as needed)
+        const newEntry = new ImageModel({ date, imageUrls });
+        await newEntry.save();
 
-        if (existingEntry) {
-            // Append new image to the existing entry
-            existingEntry.imageUrls.push(imageUrl);
-            await existingEntry.save();
-        } else {
-            // Create a new entry if date doesn't exist
-            existingEntry = new ImageModel({
-                date,
-                imageUrls: [imageUrl]
-            });
-            await existingEntry.save();
-        }
-
-        res.json({ message: "Image uploaded successfully!", data: existingEntry });
+        res.json({ message: "Upload successful!", images: imageUrls });
     } catch (error) {
-        console.error("Upload error:", error);
-        res.status(500).json({ error: "Failed to upload image" });
+        console.error("Upload Error:", error);
+        res.status(500).json({ message: "Upload failed!" });
     }
 });
+
+module.exports = router;
 
 
 // Fetch Images
