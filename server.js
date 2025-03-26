@@ -428,28 +428,25 @@ module.exports = app;
 
 
 // Fetch Images
-// Fetch Images API
+
+
 app.get("/images", async (req, res) => {
     try {
         const images = await ImageModel.find();
 
-        // Group images by date and ensure each image has an ID
+        // Group images by date
         const groupedImages = {};
         images.forEach(entry => {
             if (!groupedImages[entry.date]) {
                 groupedImages[entry.date] = [];
             }
-            
-            // Store image ID along with image URLs
-            entry.imageUrls.forEach(url => {
-                groupedImages[entry.date].push({ imageId: entry._id, url });
-            });
+            groupedImages[entry.date].push(entry.imageUrls);  // Ensure URLs are stored correctly
         });
 
         // Convert grouped images into an array format
         const structuredData = Object.keys(groupedImages).map(date => ({
             date,
-            images: groupedImages[date]
+            images: groupedImages[date].flat() // Ensure it's a single array
         }));
 
         res.json({ data: structuredData });
@@ -458,6 +455,17 @@ app.get("/images", async (req, res) => {
         res.status(500).json({ message: "Error fetching images" });
     }
 });
+
+
+
+
+
+
+
+
+
+
+
 
 
 
