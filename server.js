@@ -431,11 +431,17 @@ module.exports = app;
 app.get("/images", async (req, res) => {
     try {
         const images = await ImageModel.find();
-        res.json(images);
+        
+        // Flatten all image URLs into a single array
+        const allImages = images.flatMap(entry => entry.imageUrls);
+
+        res.json({ images: allImages });
     } catch (error) {
+        console.error("Error fetching images:", error);
         res.status(500).json({ message: "Error fetching images" });
     }
 });
+
 
 
 // Replace Image
