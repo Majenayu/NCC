@@ -460,6 +460,7 @@ app.get("/images", async (req, res) => {
 
 
 // Replace Image
+// Replace Image
 app.post("/replace-image", upload.single("newImage"), async (req, res) => {
   try {
     let { oldImage, imageId } = req.body;
@@ -483,10 +484,11 @@ app.post("/replace-image", upload.single("newImage"), async (req, res) => {
     // Delete old image from Cloudinary
     await cloudinary.uploader.destroy(publicId);
 
-    // Upload new image to Cloudinary in the same folder
+    // Upload new image to Cloudinary in the same folder as old one
+    const folderPath = oldImage.split("/").slice(-3, -1).join("/"); // Extract correct folder path
     const uploadResult = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        { folder: "ncc_parade" },
+        { folder: folderPath },  // Ensures the same upload folder is used
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
@@ -494,10 +496,10 @@ app.post("/replace-image", upload.single("newImage"), async (req, res) => {
       ).end(req.file.buffer);
     });
 
-    // Update MongoDB by replacing old image URL with the new one
+    // Replace only the specific old image in MongoDB (keeping other images intact)
     const updatedDoc = await ImageModel.findOneAndUpdate(
-      { _id: imageId, imageUrls: oldImage }, // Ensure correct document is found
-      { $set: { "imageUrls.$": uploadResult.secure_url } }, // Replace specific image
+      { _id: imageId, imageUrls: oldImage }, // Find document with matching image URL
+      { $set: { "imageUrls.$": uploadResult.secure_url } }, // Replace only that image
       { new: true }
     );
 
@@ -511,6 +513,7 @@ app.post("/replace-image", upload.single("newImage"), async (req, res) => {
     res.status(500).json({ message: "Error replacing image", error: error.message });
   }
 });
+
 
 // ✅ Start Server
 app.listen(PORT, () => {
