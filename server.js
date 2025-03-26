@@ -428,23 +428,28 @@ module.exports = app;
 
 
 // Fetch Images
+// Fetch Images API
 app.get("/images", async (req, res) => {
     try {
         const images = await ImageModel.find();
 
-        // Group images by date
+        // Group images by date and ensure each image has an ID
         const groupedImages = {};
         images.forEach(entry => {
             if (!groupedImages[entry.date]) {
                 groupedImages[entry.date] = [];
             }
-            groupedImages[entry.date].push(entry.imageUrls);  // Ensure URLs are stored correctly
+            
+            // Store image ID along with image URLs
+            entry.imageUrls.forEach(url => {
+                groupedImages[entry.date].push({ imageId: entry._id, url });
+            });
         });
 
         // Convert grouped images into an array format
         const structuredData = Object.keys(groupedImages).map(date => ({
             date,
-            images: groupedImages[date].flat() // Ensure it's a single array
+            images: groupedImages[date]
         }));
 
         res.json({ data: structuredData });
@@ -459,7 +464,8 @@ app.get("/images", async (req, res) => {
 
 
 
-// Replace Image
+
+
 // Replace Image
 app.post("/replace-image", upload.single("newImage"), async (req, res) => {
   try {
