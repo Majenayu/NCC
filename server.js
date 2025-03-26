@@ -432,15 +432,19 @@ app.get("/images", async (req, res) => {
     try {
         const images = await ImageModel.find();
         
-        // Flatten all image URLs into a single array
-        const allImages = images.flatMap(entry => entry.imageUrls);
+        // Structure images by date
+        const groupedImages = images.map(entry => ({
+            date: entry.date, 
+            images: entry.imageUrls // List of image URLs
+        }));
 
-        res.json({ images: allImages });
+        res.json({ data: groupedImages });
     } catch (error) {
         console.error("Error fetching images:", error);
         res.status(500).json({ message: "Error fetching images" });
     }
 });
+
 
 
 
