@@ -385,15 +385,16 @@ const ImageModel = mongoose.model("Image", ImageSchema);
 app.post("/upload", upload.array("images", 5), async (req, res) => {
     try {
         if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ message: "No images uploaded" });
+            return res.status(400).json({ message: "No files uploaded!" });
         }
 
-        // ✅ Get Cloudinary URLs instead of local paths
-        const imageUrls = req.files.map(file => file.path); 
-
+        const imageUrls = req.files.map(file => file.path).filter(url => url); // Remove nulls
         const { date } = req.body;
 
-        // ✅ Save image URLs in MongoDB
+        if (!date) {
+            return res.status(400).json({ message: "Date is required!" });
+        }
+
         const newEntry = new ImageModel({ date, imageUrls });
         await newEntry.save();
 
@@ -403,6 +404,7 @@ app.post("/upload", upload.array("images", 5), async (req, res) => {
         res.status(500).json({ message: "Upload failed!" });
     }
 });
+
 
 module.exports = app;
 
