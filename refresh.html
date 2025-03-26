@@ -177,46 +177,35 @@
             const imagesDiv = document.createElement("div");
             imagesDiv.style.display = "none"; // Hidden until clicked
             imagesDiv.classList.add("image-folder");
+entry.images.forEach((imageObj) => {  // 🟢 Ensure each image has an _id
+    const imgContainer = document.createElement("div");
+    imgContainer.classList.add("image-container");
 
-            entry.images.forEach(imageUrl => {
-                const imgContainer = document.createElement("div");
-                imgContainer.classList.add("image-container");
+    const imgElement = document.createElement("img");
+    imgElement.src = imageObj.imageUrl;  // ✅ Ensure the correct image URL is used
+    imgElement.onclick = () => openFullscreen(imageObj.imageUrl);
 
-                const imgElement = document.createElement("img");
-                imgElement.src = imageUrl;
-                imgElement.onclick = () => openFullscreen(imageUrl);
+    const downloadBtn = document.createElement("button");
+    downloadBtn.textContent = "📥 Download";
+    downloadBtn.classList.add("download-btn");
+    downloadBtn.onclick = () => downloadImage(imageObj.imageUrl);
 
-                const downloadBtn = document.createElement("button");
-                downloadBtn.textContent = "📥 Download";
-                downloadBtn.classList.add("download-btn");
-                downloadBtn.onclick = () => downloadImage(imageUrl);
+    const replaceBtn = document.createElement("button");
+    replaceBtn.textContent = "🔄 Replace";
+    replaceBtn.classList.add("replace-btn");
 
-                const replaceBtn = document.createElement("button");
-replaceBtn.textContent = "🔄 Replace";
-replaceBtn.classList.add("replace-btn");
-
-if (entry._id) { // ✅ Ensure the ID exists before passing
-    replaceBtn.onclick = () => replaceImage(imageUrl, entry._id);
-} else {
-    console.error("Missing imageId for image:", imageUrl);
-}
-
-
-                imgContainer.appendChild(imgElement);
-                imgContainer.appendChild(downloadBtn);
-                imgContainer.appendChild(replaceBtn);
-                imagesDiv.appendChild(imgContainer);
-            });
-
-            folderContainer.appendChild(folder);
-            folderContainer.appendChild(imagesDiv);
-            gallery.appendChild(folderContainer);
-        });
-    } catch (error) {
-        console.error("Error fetching images:", error);
-        document.getElementById("gallery").innerHTML = "<p>Error loading images</p>";
+    if (imageObj._id) { // ✅ Ensure imageId is available before passing
+        replaceBtn.onclick = () => replaceImage(imageObj.imageUrl, imageObj._id);
+    } else {
+        console.error("Missing imageId for image:", imageObj.imageUrl);
     }
-}
+
+    imgContainer.appendChild(imgElement);
+    imgContainer.appendChild(downloadBtn);
+    imgContainer.appendChild(replaceBtn);
+    imagesDiv.appendChild(imgContainer);
+});
+
 
 function openFullscreen(imageUrl) {
     const modal = document.getElementById("imageModal");
