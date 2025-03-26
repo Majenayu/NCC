@@ -288,39 +288,7 @@ async function replaceImage(oldImage, imageId) {
         }
     };
 }
-    <div id="imageContainer">
-    <!-- Dynamically load images -->
-    <script>
-        async function loadImages() {
-            try {
-                const response = await fetch("https://ncc-qmzp.onrender.com/get-images");
-                const images = await response.json();
-
-                const container = document.getElementById("imageContainer");
-                container.innerHTML = ""; // Clear old content
-
-                images.forEach((image) => {
-                    const imgElement = document.createElement("img");
-                    imgElement.src = image.imageUrl;
-                    imgElement.alt = "Uploaded Image";
-                    imgElement.width = 200;
-
-                    const replaceButton = document.createElement("button");
-                    replaceButton.innerText = "Replace";
-                    replaceButton.onclick = () => replaceImage(image.imageUrl, image._id); // Ensure imageId is passed
-
-                    container.appendChild(imgElement);
-                    container.appendChild(replaceButton);
-                });
-            } catch (error) {
-                console.error("Error loading images:", error);
-            }
-        }
-
-        loadImages();
-    </script>
-</div>
-
+  
 
 // ✅ Fetch images when page loads
 window.onload = () => fetchImages();
