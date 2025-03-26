@@ -178,35 +178,36 @@
             imagesDiv.style.display = "none"; // Hidden until clicked
             imagesDiv.classList.add("image-folder");
               
-            
-     entry.images.forEach(imageObj => {
-    const imgContainer = document.createElement("div");
-    imgContainer.classList.add("image-container");
+    entry.images.forEach(imageUrl => {
+                const imgContainer = document.createElement("div");
+                imgContainer.classList.add("image-container");
 
-    const imgElement = document.createElement("img");
-    imgElement.src = imageObj.url;  // Ensure you use `imageObj.url`
-    imgElement.onclick = () => openFullscreen(imageObj.url);
+                const imgElement = document.createElement("img");
+                imgElement.src = imageUrl;
+                imgElement.onclick = () => openFullscreen(imageUrl);
 
-    const downloadBtn = document.createElement("button");
-    downloadBtn.textContent = "📥 Download";
-    downloadBtn.classList.add("download-btn");
-    downloadBtn.onclick = () => downloadImage(imageObj.url);
+                const downloadBtn = document.createElement("button");
+                downloadBtn.textContent = "📥 Download";
+                downloadBtn.classList.add("download-btn");
+                downloadBtn.onclick = () => downloadImage(imageUrl);
 
-    const replaceBtn = document.createElement("button");
-    replaceBtn.textContent = "🔄 Replace";
-    replaceBtn.classList.add("replace-btn");
+       const replaceBtn = document.createElement("button");
+replaceBtn.textContent = "🔄 Replace";
+replaceBtn.classList.add("replace-btn");
 
-    if (imageObj._id) { // ✅ Ensure the correct ID is used
-        replaceBtn.onclick = () => replaceImage(imageObj.url, imageObj._id);
-    } else {
-        console.error("❌ Missing imageId for image:", imageObj.url);
-    }
+if (entry._id) { // Ensure the ID exists before assigning the function
+    replaceBtn.onclick = () => replaceImage(imageUrl, entry._id);
+} else {
+    console.error("❌ Missing imageId for image:", imageUrl);
+}
 
-    imgContainer.appendChild(imgElement);
-    imgContainer.appendChild(downloadBtn);
-    imgContainer.appendChild(replaceBtn);
-    imagesDiv.appendChild(imgContainer);
-});
+
+
+                imgContainer.appendChild(imgElement);
+                imgContainer.appendChild(downloadBtn);
+                imgContainer.appendChild(replaceBtn);
+                imagesDiv.appendChild(imgContainer);
+            });
 
 
             folderContainer.appendChild(folder);
