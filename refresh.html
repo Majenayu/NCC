@@ -251,30 +251,38 @@ async function downloadImage(imageUrl) {
 }
 
 async function replaceImage(oldImage, imageId) {
-    const newImageFile = document.getElementById("newImageInput").files[0];
-    if (!newImageFile) return alert("Please select a new image to replace");
+    const fileInput = document.getElementById("newImageInput");
 
-    const formData = new FormData();
-    formData.append("newImage", newImageFile);
-    formData.append("oldImage", oldImage);
-    formData.append("imageId", imageId);
+    // Open file selection dialog
+    fileInput.click();
 
-    try {
-        const response = await fetch("https://ncc-qmzp.onrender.com/replace-image", {
-            method: "POST",
-            body: formData,
-        });
+    // Wait for the user to choose a file
+    fileInput.onchange = async () => {
+        const newImageFile = fileInput.files[0];
+        if (!newImageFile) return;
 
-        const result = await response.json();
-        if (response.ok) {
-            alert("Image replaced successfully!");
-            location.reload();
-        } else {
-            alert(result.message || "Failed to replace image");
+        const formData = new FormData();
+        formData.append("newImage", newImageFile);
+        formData.append("oldImage", oldImage);
+        formData.append("imageId", imageId);
+
+        try {
+            const response = await fetch("https://ncc-qmzp.onrender.com/replace-image", {
+                method: "POST",
+                body: formData,
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert("Image replaced successfully!");
+                location.reload();
+            } else {
+                alert(result.message || "Failed to replace image");
+            }
+        } catch (error) {
+            console.error("Error replacing image:", error);
         }
-    } catch (error) {
-        console.error("Error replacing image:", error);
-    }
+    };
 }
 
 // ✅ Fetch images when page loads
