@@ -384,10 +384,16 @@ const ImageModel = mongoose.model("Image", ImageSchema);
 // Upload Route
 app.post("/upload", upload.array("images", 5), async (req, res) => {
     try {
-        const imageUrls = req.files.map(file => file.path); // Get uploaded image URLs
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: "No images uploaded" });
+        }
+
+        // ✅ Get Cloudinary URLs instead of local paths
+        const imageUrls = req.files.map(file => file.path); 
+
         const { date } = req.body;
 
-        // Save to MongoDB (adjust as needed)
+        // ✅ Save image URLs in MongoDB
         const newEntry = new ImageModel({ date, imageUrls });
         await newEntry.save();
 
