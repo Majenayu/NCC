@@ -413,9 +413,21 @@ const ImageModel = mongoose.model("Image", ImageSchema);
                  folder: `ncc_parade/${date}`,
              });
              uploadedImages.push(result.secure_url);
-             uploadedImages.push(result.secure_url);
+             
              return result.secure_url;
          });
+           await Promise.all(uploadPromises); // Wait for all uploads to complete
+
+        // Save new entry in MongoDB
+        const newEntry = new ImageModel({ date, imageUrls: uploadedImages });
+        await newEntry.save();
+
+        res.json({ message: "Upload successful!", images: uploadedImages });
+    } catch (error) {
+        console.error("Upload Error:", error);
+        res.status(500).json({ message: "Upload failed!" });
+    }
+});
 
 module.exports = app;
 
