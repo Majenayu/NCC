@@ -465,30 +465,41 @@ app.post("/replace-image", upload.single("newImage"), async (req, res) => {
       return res.status(400).json({ message: "Missing required data" });
     }
 
+    // Extract public ID correctly from Cloudinary URL
+    const publicId = oldImage.split("/").slice(-2).join("/").split(".")[0]; 
+
     // Delete old image from Cloudinary
-    const publicId = oldImage.split("/").pop().split(".")[0];
     await cloudinary.uploader.destroy(publicId);
 
-    // Upload new image to Cloudinary
-    const newImageUrl = await cloudinary.uploader.upload(
-      `data:image/png;base64,${req.file.buffer.toString("base64")}`,
-      { folder: "ncc_parade" }
-    );
-
-    // Update MongoDB
-    await ImageModel.findByIdAndUpdate(imageId, {
-      $set: { "imageUrls.$[elem]": newImageUrl.secure_url }
-    }, {
-      arrayFilters: [{ "elem": oldImage }],
-      new: true
+    // Upload new image to Cloudinary in the same folder as the original
+    const uploadResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: "ncc_parade" },  // Ensure it's uploaded to the same folder
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(req.file.buffer);
     });
 
-    res.json({ message: "Image replaced successfully", newUrl: newImageUrl.secure_url });
+    // Update MongoDB by replacing the old image URL with the new one
+    const updatedDoc = await ImageModel.findOneAndUpdate(
+      { _id: imageId, imageUrls: oldImage }, // Find document where imageUrls contains oldImage
+      { $set: { "imageUrls.$": uploadResult.secure_url } }, // Replace that specific image
+      { new: true }
+    );
+
+    if (!updatedDoc) {
+      return res.status(404).json({ message: "Image not found in database" });
+    }
+
+    res.json({ message: "Image replaced successfully", newUrl: uploadResult.secure_url });
   } catch (error) {
     console.error("Error replacing image:", error);
     res.status(500).json({ message: "Error replacing image" });
   }
 });
+
 // ✅ Start Server
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}/`);
