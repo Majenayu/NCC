@@ -279,19 +279,39 @@
 
 async function fetchDashboardData() {
     try {
-        const response = await fetch(`${BASE_URL}/dashboard-stats`);
+        const response = await fetch('https://ncc-qmzp.onrender.com/dashboard-stats');
         const data = await response.json();
 
-        if (response.ok) {
-            document.getElementById('totalCadets').textContent = data.totalCadets || 0;
-            document.getElementById('todayAttendance').textContent = data.attendedToday || 0;
+        console.log('Dashboard Data:', data); // Debugging
+
+        // Select elements safely
+        const totalCadetsElement = document.getElementById('totalCadets');
+        const attendedTodayElement = document.getElementById('attendedToday');
+        const messageElement = document.getElementById('attendanceMessage');
+
+        if (!totalCadetsElement || !attendedTodayElement || !messageElement) {
+            console.error("One or more elements not found in the HTML.");
+            return;
+        }
+
+        // Update values only if elements exist
+        totalCadetsElement.textContent = data.totalCadets;
+        attendedTodayElement.textContent = data.attendedToday;
+
+        if (data.message) {
+            messageElement.textContent = data.message;
+            messageElement.style.color = "red"; // Show message in red
         } else {
-            console.error('Failed to fetch dashboard data');
+            messageElement.textContent = ""; // Clear message if data exists
         }
     } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        console.error("Error fetching dashboard data:", error);
     }
 }
+
+// Ensure script runs after the DOM is loaded
+document.addEventListener("DOMContentLoaded", fetchDashboardData);
+
 
 // Call the function on page load
 fetchDashboardData();
