@@ -13,11 +13,18 @@
     margin: 0;
     padding: 0;
     min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .dashboard {
     display: flex;
-    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    max-width: 1200px;
+    min-height: 90vh;
 }
 
 .sidebar {
@@ -25,10 +32,9 @@
     background: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(10px);
     padding: 2rem 1rem;
-    position: fixed;
-    height: 100vh;
+    height: 90vh;
     overflow-y: auto;
-    left: 0;
+    border-radius: 10px;
 }
 
 .logo-container {
@@ -74,21 +80,23 @@
     text-align: center;
 }
 
-.nav-link:hover, 
-.nav-link.active {
+.nav-link:hover, .nav-link.active {
     background: rgba(255, 215, 0, 0.1);
     color: #ffd700;
 }
 
 .main-content {
     flex: 1;
-    margin-left: 250px;
     padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
     margin-bottom: 2rem;
 }
@@ -104,47 +112,12 @@
     color: #ffffff;
 }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    background: #ffd700;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #1a237e;
-    font-weight: bold;
-}
-
-.logout-btn {
-    background: none;
-    border: none;
-    color: #ffffff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.logout-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffd700;
-}
-
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    width: 100%;
+    justify-content: center;
 }
 
 .dashboard-card {
@@ -153,6 +126,7 @@
     padding: 1.5rem;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .card-header {
@@ -177,9 +151,11 @@
 }
 
 .quick-actions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
     gap: 1rem;
+    width: 100%;
 }
 
 .action-btn {
@@ -202,18 +178,21 @@
 
 /* Responsive Fixes */
 @media (max-width: 768px) {
-    .sidebar {
-        width: 60px;
-        padding: 1rem 0.5rem;
+    .dashboard {
+        flex-direction: column;
+        width: 100%;
+        min-height: auto;
     }
 
-    .logo-container h2, 
-    .nav-link span {
-        display: none;
+    .sidebar {
+        width: 90%;
+        height: auto;
+        margin-bottom: 1rem;
     }
 
     .main-content {
-        margin-left: 60px;
+        width: 100%;
+        padding: 1rem;
     }
 
     .dashboard-grid {
