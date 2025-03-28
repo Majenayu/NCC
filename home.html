@@ -11,19 +11,140 @@
 <body>
 
     <button id="logoutButton">Logout</button>
-
-    <h1> Attendance Management</h1>
+<div class="dashboard">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="https://res.cloudinary.com/dcd0vatd4/image/upload/v1743165814/download_rhmhhr.png">
+                <h2>VVCE NCC</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="home.html" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="manage-cadets.html" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Manage Cadets</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="add-attendance.html" class="nav-link">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>Add Attendance</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="attendance-status.html" class="nav-link">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Attendance Status</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="download-attendance.html" class="nav-link">
+                        <i class="fas fa-download"></i>
+                        <span>Download Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="refreshment.html" class="nav-link">
+                        <i class="fas fa-coffee"></i>
+                        <span>Add Refreshments Bills</span>
+                    </a>
+                </li>
+                 <li class="nav-item">
+                    <a href="refresh.html" class="nav-link">
+                        <i class="fas fa-coffee"></i>
+                        <span>Fetch Refreshments Bills</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     
-    <div class="container">
-        <a href="manage-cadets.html" class="button"><div class="circle">01</div> <i class="fas fa-users"></i> Manage Cadets</a>
-        <a href="add-attendance.html" class="button"><div class="circle">02</div> <i class="fas fa-calendar-check"></i> Add Attendance</a>
-        <a href="attendance-status.html" class="button"><div class="circle">03</div> <i class="fas fa-chart-line"></i> View Attendance Status</a>
-        <a href="download-attendance.html" class="button"><div class="circle">04</div> <i class="fas fa-file-download"></i> Download Attendance</a>
-        <a href="refreshment.html" class="button"><div class="circle">05</div> <i class="fas fa-utensils"></i> Add Refreshment Details</a>
-        <a href="refresh.html" class="button"><div class="circle">06</div> <i class="fas fa-sync-alt"></i> Fetch Refreshment Details</a>
-    </div>  
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Total Cadets</h3>
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-content">
+                        <h2 id="totalCadets">0</h2>
+                        <p>Active cadets in the system</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Today's Attendance</h3>
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="card-content">
+                        <h2 id="todayAttendance">0</h2>
+                        <p>Cadets present today</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Upcoming Events</h3>
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="card-content">
+                        <h2 id="upcomingEvents">0</h2>
+                        <p>Scheduled events this week</p>
+                    </div>
+                </div>
+            </div>
+    <div class="dashboard-card">
+                <div class="card-header">
+                    <h3>Quick Actions</h3>
+                </div>
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="location.href='add-attendance.html'">
+                        <i class="fas fa-plus"></i>
+                        Add Attendance
+                    </button>
+                    <button class="action-btn" onclick="location.href='manage-cadets.html'">
+                        <i class="fas fa-user-plus"></i>
+                        Add New Cadet
+                    </button>
+                    <button class="action-btn" onclick="location.href='download-attendance.html'">
+                        <i class="fas fa-file-download"></i>
+                        Download Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
+         // Check if user is logged in
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) {
+            window.location.href = 'login.html';
+        }
+
+        // Update user information
+        document.getElementById('userName').textContent = user.name || 'User';
+        document.getElementById('userAvatar').textContent = (user.name || 'U')[0].toUpperCase();
+
+        // Fetch dashboard data
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch(`${BASE_URL}/dashboard-stats`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('totalCadets').textContent = data.totalCadets || 0;
+                    document.getElementById('todayAttendance').textContent = data.todayAttendance || 0;
+                    document.getElementById('upcomingEvents').textContent = data.upcomingEvents || 0;
+                }
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            }
+        }
         document.getElementById("logoutButton").addEventListener("click", function () {
             // Clear session and local storage
             localStorage.clear();
@@ -38,6 +159,8 @@
                 history.go(1);
             };
         });
+             // Fetch initial dashboard data
+        fetchDashboardData();
     </script>
 
 </body>
