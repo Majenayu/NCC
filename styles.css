@@ -208,3 +208,407 @@ body {
                 grid-template-columns: 1fr;
             }
         }
+/* Base styles for all pages */
+:root {
+    --primary-color: #1a237e;
+    --secondary-color: #0d47a1;
+    --accent-color: #ffd700;
+    --text-color: #ffffff;
+    --background-dark: rgba(0, 0, 0, 0.8);
+    --shadow-color: rgba(0, 0, 0, 0.8);
+}
+
+body {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* High contrast mode for outdoor visibility */
+@media (prefers-color-scheme: light) {
+    body {
+        background: linear-gradient(135deg, #000066, #0000cc);
+    }
+    
+    .folder, .nav-link, .page-title h1 {
+        color: var(--accent-color);
+        text-shadow: 2px 2px 4px var(--shadow-color);
+    }
+    
+    .content-container, .image-container {
+        background: var(--background-dark);
+        box-shadow: 0 4px 10px var(--shadow-color);
+    }
+    
+    button, .btn {
+        font-weight: bold;
+        text-shadow: 1px 1px 2px var(--shadow-color);
+    }
+}
+
+/* Common container styles */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+/* Form styles */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Button styles */
+.btn {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    color: var(--primary-color);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+/* Table styles */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background: var(--background-dark);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table th,
+.table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table th {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+/* Card styles */
+.card {
+    background: var(--background-dark);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+/* Navigation styles */
+.nav {
+    background: var(--background-dark);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.nav-link {
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: rgba(255, 215, 0, 0.1);
+    color: var(--accent-color);
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    .nav {
+        padding: 0.5rem;
+    }
+
+    .nav-link {
+        display: block;
+        padding: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        padding: 20px;
+    }
+
+    .table {
+        font-size: 0.9rem;
+    }
+}
+
+/* Desktop styles */
+@media (min-width: 1025px) {
+    .container {
+        padding: 30px;
+    }
+
+    .btn {
+        min-width: 150px;
+    }
+}
+
+/* Landscape mode optimization */
+@media (orientation: landscape) and (max-height: 500px) {
+    .container {
+        padding: 10px;
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.8rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+
+    .btn, .nav {
+        display: none;
+    }
+
+    .container {
+        max-width: none;
+        padding: 0;
+    }
+
+    .table {
+        border: 1px solid #ddd;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #ddd;
+        color: black;
+    }
+}
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+}
+
+/* Heading Style */
+h1 {
+    margin-bottom: 120px; /* Space between heading and buttons */
+    color: #ffffff;  /* Change to any color you like */
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+/* Button Container */
+.container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    grid-gap: 20px; /* Space between buttons */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Button Styles */
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 15px 25px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    width: 350px;  /* Adjust width if needed */
+    white-space: nowrap; /* Prevents text from wrapping */
+    overflow: hidden;  /* Hides overflow */
+    text-overflow: ellipsis;  /* Adds "..." if text is too long */
+}
+.button i {
+    margin-left: 10px;  /* Add space between icon and text */
+}
+
+/* Number Circle */
+.circle {
+    flex-shrink: 0;  /* Prevents the number circle from resizing */
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: white;
+    color: black;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+/* Unique Styles for Each Button */
+.button:nth-child(1) {
+    background: linear-gradient(to right, #b9b110, #87111e);
+}
+
+.button:nth-child(1) .circle {
+    border-color: #004d99;
+}
+.button:nth-child(2) {
+    background: linear-gradient(to right, #1e90ff, #0e696b);
+}
+
+.button:nth-child(2) .circle {
+    border-color: #004d99;
+}
+
+.button:nth-child(3) {
+    background: linear-gradient(to right, #ff512f, #7f0e7d);
+}
+
+.button:nth-child(3) .circle {
+    border-color: #dd2476;
+}
+
+.button:nth-child(4) {
+    background: linear-gradient(to right, #56ab2f, #697a0b);
+}
+
+.button:nth-child(4) .circle {
+    border-color: #56ab2f;
+}
+.button:nth-child(5) {
+    background: linear-gradient(to right, #ffffff, #9403e3);
+}
+.button:nth-child(5) .circle {
+    border-color: #a00808;
+}
+.button:nth-child(6) {
+    background: linear-gradient(to right, #000000, #ff1904);
+}
+.button:nth-child(6) .circle {
+    border-color: #a00808;
+}
+
+/* Responsive Layout */
+
+@media (max-width: 768px) {
+    .button {
+        width: auto; /* Adjust for smaller screens */
+        font-size: 16px;
+    }
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: url('background.jpg') no-repeat center center/cover;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+#logoutButton {
+    position: fixed;
+    top: 250px;
+    right: 10px;
+    padding: 10px 15px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#logoutButton:hover {
+    background-color: #cc0000;
+}
+
+
+/* For Gradient Background Instead */
+body {
+    background: linear-gradient(135deg, #d71313, #000080,#87CEEB);
+}
