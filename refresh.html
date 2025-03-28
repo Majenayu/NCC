@@ -191,15 +191,6 @@
                 downloadBtn.classList.add("download-btn");
                 downloadBtn.onclick = () => downloadImage(imageUrl);
 
-       const replaceBtn = document.createElement("button");
-replaceBtn.textContent = "🔄 Replace";
-replaceBtn.classList.add("replace-btn");
-
-if (entry._id) { // Ensure the ID exists before assigning the function
-    replaceBtn.onclick = () => replaceImage(imageUrl, entry._id);
-} else {
-    console.error("❌ Missing imageId for image:", imageUrl);
-}
 
 
 
