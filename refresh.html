@@ -243,52 +243,6 @@ async function downloadImage(imageUrl) {
     }
 }
 
-async function replaceImage(oldImage, imageId) {
-        if (!imageId) {
-        console.error("❌ replaceImage() called without an imageId!");
-        alert("Error: Image ID is missing!");
-        return;
-    }
-
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.style.display = "none";
-    document.body.appendChild(fileInput);
-    
-    // Open file selection dialog
-    fileInput.click();
-
-    fileInput.onchange = async () => {
-        const newImageFile = fileInput.files[0];
-        if (!newImageFile) return;
-
-        const formData = new FormData();
-        formData.append("newImage", newImageFile);
-        formData.append("oldImage", oldImage);
-        formData.append("imageId", imageId);
-
-        try {
-            const response = await fetch("https://ncc-qmzp.onrender.com/replace-image", {
-                method: "POST",
-                body: formData,
-            });
-
-            const result = await response.json();
-            if (response.ok) {
-                alert("Image replaced successfully!");
-                location.reload();
-            } else {
-                alert(result.message || "Failed to replace image");
-            }
-        } catch (error) {
-            console.error("Error replacing image:", error);
-        } finally {
-            document.body.removeChild(fileInput); // Cleanup
-        }
-    };
-        fileInput.click(); // 🔹 Trigger file selection dialog
-}
   
 
 // ✅ Fetch images when page loads
