@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const multer = require("multer");
 const bcrypt = require("bcryptjs");
-const Attendance = require('./models/Attendance'); // Import Attendance model
+
 
 
 const jwt = require("jsonwebtoken");
