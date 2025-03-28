@@ -3,45 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
+    <title>VVCE NCC - National Cadet Corps</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: #ecf0f1;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
             flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            color: #ffd700;
+        }
+
+        .header p {
+            margin: 0.5rem 0;
+            font-size: 1.2rem;
+            color: #ffffff;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
             text-align: center;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+        .ncc-logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .welcome-text {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #ffffff;
+        }
+
+        .welcome-text span {
+            color: #ffd700;
         }
 
         .login-button {
-            font-size: 1.2rem;
-            padding: 12px 24px;
-            background: #3498db;
-            color: white;
+            background: #ffd700;
+            color: #1a237e;
             border: none;
-            border-radius: 8px;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .login-button:hover {
-            background: #2980b9;
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: #ffed4a;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            width: 250px;
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card i {
+            font-size: 2rem;
+            color: #ffd700;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin: 0.5rem 0;
+            color: #ffffff;
+        }
+
+        .feature-card p {
+            margin: 0;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .welcome-text {
+                font-size: 1.5rem;
+            }
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to Our Platform</h1>
-    <button class="login-button" onclick="window.location.href='login.html'">Login</button>
+    <div class="header">
+        <h1>VVCE NCC</h1>
+        <p>National Cadet Corps - Vidyavardhaka College of Engineering</p>
+    </div>
+
+    <div class="main-content">
+        <img src="https://ncc.gov.in/sites/default/files/ncc_logo.png" alt="NCC Logo" class="ncc-logo">
+        <div class="welcome-text">
+            Welcome to <span>VVCE NCC</span> Management System
+        </div>
+        <a href="login.html" class="login-button">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+
+        <div class="features">
+            <div class="feature-card">
+                <i class="fas fa-users"></i>
+                <h3>Cadet Management</h3>
+                <p>Efficiently manage cadet information and profiles</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-calendar-check"></i>
+                <h3>Attendance Tracking</h3>
+                <p>Track and manage cadet attendance records</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-file-alt"></i>
+                <h3>Reports</h3>
+                <p>Generate detailed reports and analytics</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
