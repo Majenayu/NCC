@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const multer = require("multer");
 const bcrypt = require("bcryptjs");
+const Attendance = require('./models/Attendance'); // Import Attendance model
 
 
 const jwt = require("jsonwebtoken");
@@ -455,6 +456,7 @@ app.get("/images", async (req, res) => {
         res.status(500).json({ message: "Error fetching images" });
     }
 });
+
 // Function to get total cadets and today's attendance
 app.get('/dashboard-stats', async (req, res) => {
     try {
@@ -464,21 +466,26 @@ app.get('/dashboard-stats', async (req, res) => {
         // Get today's date in YYYY-MM-DD format
         const today = new Date().toISOString().split('T')[0];
 
-        // Count cadets who attended today
-        const attendedToday = await Cadet.countDocuments({
-            'attendanceRecords.date': today,
-            'attendanceRecords.status': 'Present'
-        });
+        // Find today's attendance record
+        const todayAttendance = await Attendance.findOne({ date: today });
+
+        if (!todayAttendance) {
+            return res.json({
+                totalCadets,
+                attendedToday: 0,
+                message: "Today's attendance has not been entered yet.",
+            });
+        }
+
+        // Count cadets marked as "present"
+        const attendedToday = todayAttendance.attendanceData.filter(cadet => cadet.status === "present").length;
 
         res.json({ totalCadets, attendedToday });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Server Error' });
     }
 });
-
-
-
-
 
 
 
