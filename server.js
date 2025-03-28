@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const multer = require("multer");
+const Cadet = require('./models/Cadet'); // Import Cadet model
 const bcrypt = require("bcryptjs");
 
 
@@ -453,6 +454,26 @@ app.get("/images", async (req, res) => {
     } catch (error) {
         console.error("Error fetching images:", error);
         res.status(500).json({ message: "Error fetching images" });
+    }
+});
+// Function to get total cadets and today's attendance
+app.get('/dashboard-stats', async (req, res) => {
+    try {
+        // Get total cadets
+        const totalCadets = await Cadet.countDocuments();
+
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
+
+        // Count cadets who attended today
+        const attendedToday = await Cadet.countDocuments({
+            'attendanceRecords.date': today,
+            'attendanceRecords.status': 'Present'
+        });
+
+        res.json({ totalCadets, attendedToday });
+    } catch (error) {
+        res.status(500).json({ error: 'Server Error' });
     }
 });
 
