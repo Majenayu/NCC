@@ -145,20 +145,12 @@
                 console.error('Error fetching dashboard data:', error);
             }
         }
-        document.getElementById("logoutButton").addEventListener("click", function () {
-            // Clear session and local storage
-            localStorage.clear();
-            sessionStorage.clear();
+        // Logout function
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
 
-            // Redirect to index.html
-            window.location.href = "index.html";
-
-            // Prevent user from using back button after logout
-            history.pushState(null, null, "index.html");
-            window.onpopstate = function () {
-                history.go(1);
-            };
-        });
              // Fetch initial dashboard data
         fetchDashboardData();
     </script>
