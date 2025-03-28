@@ -120,12 +120,7 @@
     </div>
 
     <script>
-         // Check if user is logged in
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (!user) {
-            window.location.href = 'login.html';
-        }
-
+    
         // Update user information
         document.getElementById('userName').textContent = user.name || 'User';
         document.getElementById('userAvatar').textContent = (user.name || 'U')[0].toUpperCase();
