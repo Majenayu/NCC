@@ -27,6 +27,7 @@
             padding: 2rem 1rem;
             position: fixed;
             height: 100vh;
+           
             overflow-y: auto;
         }
 
@@ -82,6 +83,8 @@
             flex: 1;
             margin-left: 250px;
             padding: 2rem;
+            left: 50%;
+    transform: translateX(-50%);
         }
 
         .header {
@@ -178,6 +181,8 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
+            left: 50%;
+    transform: translateX(-50%);
         }
 
         .action-btn {
@@ -191,11 +196,15 @@
             align-items: center;
             gap: 0.5rem;
             transition: all 0.3s ease;
+            left: 50%;
+    transform: translateX(-50%);
         }
 
         .action-btn:hover {
             background: rgba(255, 215, 0, 0.2);
             transform: translateY(-2px);
+            left: 50%;
+    transform: translateX(-50%);
         }
 
         @media (max-width: 768px) {
