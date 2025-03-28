@@ -6,361 +6,253 @@
     <title>Dashboard - VVCE NCC</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-  body {
-    background: linear-gradient(135deg, #1a237e, #0d47a1);
-    color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        body {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.dashboard {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 90%;
-    max-width: 1200px;
-    min-height: 90vh;
-}
+        .dashboard {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 90%;
+            max-width: 1200px;
+            min-height: 90vh;
+        }
 
-.sidebar {
-    width: 250px;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    padding: 2rem 1rem;
-    height: 90vh;
-    overflow-y: auto;
-    border-radius: 10px;
-}
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 2rem 1rem;
+            height: 90vh;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
 
-.logo-container {
-    text-align: center;
-    margin-bottom: 2rem;
-}
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
 
-.logo-container img {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 1rem;
-}
+        .logo-container img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
 
-.logo-container h2 {
-    color: #ffd700;
-    margin: 0;
-    font-size: 1.5rem;
-}
+        .logo-container h2 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 1.5rem;
+        }
 
-.nav-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-.nav-item {
-    margin-bottom: 0.5rem;
-}
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
 
-.nav-link {
-    display: flex;
-    align-items: center;
-    padding: 0.8rem 1rem;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
 
-.nav-link i {
-    margin-right: 1rem;
-    width: 20px;
-    text-align: center;
-}
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
 
-.nav-link:hover, .nav-link.active {
-    background: rgba(255, 215, 0, 0.1);
-    color: #ffd700;
-}
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
 
-.main-content {
-    flex: 1;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
 
-.header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 2rem;
-}
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
 
-.welcome-text h1 {
-    color: #ffd700;
-    margin: 0;
-    font-size: 2rem;
-}
+        .welcome-text h1 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 2rem;
+        }
 
-.welcome-text p {
-    margin: 0.5rem 0;
-    color: #ffffff;
-}
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            justify-content: center;
+        }
 
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    width: 100%;
-    justify-content: center;
-}
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
 
-.dashboard-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 1.5rem;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
 
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
+        .card-header h3 {
+            color: #ffd700;
+            margin: 0;
+        }
 
-.card-header h3 {
-    color: #ffd700;
-    margin: 0;
-}
+        .card-header i {
+            font-size: 1.5rem;
+            color: #ffd700;
+        }
 
-.card-header i {
-    font-size: 1.5rem;
-    color: #ffd700;
-}
+        .card-content {
+            color: #ffffff;
+        }
 
-.card-content {
-    color: #ffffff;
-}
+        .quick-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            width: 100%;
+        }
 
-.quick-actions {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    width: 100%;
-}
+        .action-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: none;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
 
-.action-btn {
-    background: rgba(255, 215, 0, 0.1);
-    border: none;
-    color: #ffffff;
-    padding: 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-}
+        .action-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+        }
 
-.action-btn:hover {
-    background: rgba(255, 215, 0, 0.2);
-    transform: translateY(-2px);
-}
+        /* Logout button styling */
         .logout-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: none;
-    border: none;
-    color: #ffffff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
 
-.logout-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffd700;
-}
+        .logout-btn i {
+            font-size: 1.2rem;
+        }
 
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffd700;
+        }
 
-/* Responsive Fixes */
-@media (max-width: 768px) {
-    .dashboard {
-        flex-direction: column;
-        width: 100%;
-        min-height: auto;
-    }
+        /* Responsive Fixes */
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+                width: 100%;
+                min-height: auto;
+            }
 
-    .sidebar {
-        width: 90%;
-        height: auto;
-        margin-bottom: 1rem;
-    }
+            .sidebar {
+                width: 90%;
+                height: auto;
+                margin-bottom: 1rem;
+            }
 
-    .main-content {
-        width: 100%;
-        padding: 1rem;
-    }
+            .main-content {
+                width: 100%;
+                padding: 1rem;
+            }
 
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <button id="logoutButton">Logout</button>
-<div class="dashboard">
+    <!-- Logout Button -->
+    <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+
+    <div class="dashboard">
         <div class="sidebar">
             <div class="logo-container">
                 <img src="https://res.cloudinary.com/dcd0vatd4/image/upload/v1743165814/download_rhmhhr.png">
                 <h2>VVCE NCC</h2>
             </div>
             <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="home.html" class="nav-link active">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="manage-cadets.html" class="nav-link">
-                        <i class="fas fa-users"></i>
-                        <span>Manage Cadets</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="add-attendance.html" class="nav-link">
-                        <i class="fas fa-calendar-plus"></i>
-                        <span>Add Attendance</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="attendance-status.html" class="nav-link">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Attendance Status</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="download-attendance.html" class="nav-link">
-                        <i class="fas fa-download"></i>
-                        <span>Download Reports</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="refreshment.html" class="nav-link">
-                        <i class="fas fa-coffee"></i>
-                        <span>Add Refreshments Bills</span>
-                    </a>
-                </li>
-                 <li class="nav-item">
-                    <a href="refresh.html" class="nav-link">
-                        <i class="fas fa-coffee"></i>
-                        <span>Fetch Refreshments Bills</span>
-                    </a>
-                </li>
+                <li class="nav-item"><a href="home.html" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li class="nav-item"><a href="manage-cadets.html" class="nav-link"><i class="fas fa-users"></i> Manage Cadets</a></li>
+                <li class="nav-item"><a href="add-attendance.html" class="nav-link"><i class="fas fa-calendar-plus"></i> Add Attendance</a></li>
+                <li class="nav-item"><a href="attendance-status.html" class="nav-link"><i class="fas fa-calendar-check"></i> Attendance Status</a></li>
+                <li class="nav-item"><a href="download-attendance.html" class="nav-link"><i class="fas fa-download"></i> Download Reports</a></li>
+                <li class="nav-item"><a href="refreshment.html" class="nav-link"><i class="fas fa-coffee"></i> Add Refreshments Bills</a></li>
+                <li class="nav-item"><a href="refresh.html" class="nav-link"><i class="fas fa-coffee"></i> Fetch Refreshments Bills</a></li>
             </ul>
-        </div>
-    
-            <div class="dashboard-grid">
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h3>Total Cadets</h3>
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="card-content">
-                        <h2 id="totalCadets">0</h2>
-                        <p>Active cadets in the system</p>
-                    </div>
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h3>Today's Attendance</h3>
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
-                    <div class="card-content">
-                        <h2 id="todayAttendance">0</h2>
-                        <p>Cadets present today</p>
-                    </div>
-                </div>
-
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h3>Upcoming Events</h3>
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div class="card-content">
-                        <h2 id="upcomingEvents">0</h2>
-                        <p>Scheduled events this week</p>
-                    </div>
-                </div>
-            </div>
-    <div class="dashboard-card">
-                <div class="card-header">
-                    <h3>Quick Actions</h3>
-                </div>
-                <div class="quick-actions">
-                    <button class="action-btn" onclick="location.href='add-attendance.html'">
-                        <i class="fas fa-plus"></i>
-                        Add Attendance
-                    </button>
-                    <button class="action-btn" onclick="location.href='manage-cadets.html'">
-                        <i class="fas fa-user-plus"></i>
-                        Add New Cadet
-                    </button>
-                    <button class="action-btn" onclick="location.href='download-attendance.html'">
-                        <i class="fas fa-file-download"></i>
-                        Download Report
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
     <script>
-    
-
-
-        // Fetch dashboard data
-        async function fetchDashboardData() {
-            try {
-                const response = await fetch(`${BASE_URL}/dashboard-stats`);
-                const data = await response.json();
-                
-                if (response.ok) {
-                    document.getElementById('totalCadets').textContent = data.totalCadets || 0;
-                    document.getElementById('todayAttendance').textContent = data.todayAttendance || 0;
-                    document.getElementById('upcomingEvents').textContent = data.upcomingEvents || 0;
-                }
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-            }
-        }
-        // Logout function
         function logout() {
             localStorage.removeItem('user');
             window.location.href = 'login.html';
         }
-
-             // Fetch initial dashboard data
-        fetchDashboardData();
     </script>
 
 </body>
