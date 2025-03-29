@@ -237,32 +237,25 @@ app.post("/add-attendances", async (req, res) => {
 // ✅ Get Attendance within Date Range
 app.post("/get-attendances", async (req, res) => {
     const { startDate, endDate } = req.body;
-
     if (!startDate || !endDate) {
         return res.status(400).json({ message: "❌ Start and end dates are required" });
     }
 
     try {
         const records = await Attendance.find({
-            date: { $gte: new Date(startDate), $lte: new Date(endDate) }
+            date: { $gte: startDate, $lte: endDate }
         });
 
         let attendanceSummary = {};
 
-        for (const record of records) {
-            for (const entry of record.attendanceData) {
+        records.forEach(record => {
+            record.attendanceData.forEach(entry => {
                 if (!attendanceSummary[entry.regNo]) {
-                    const cadet = await Cadet.findOne({ regNo: entry.regNo }); // Fetch cadet info
-                    attendanceSummary[entry.regNo] = {
-                        name: cadet ? cadet.name : "Unknown", // Include the cadet's name
-                        present: 0,
-                        absent: 0,
-                        neutral: 0
-                    };
+                    attendanceSummary[entry.regNo] = { present: 0, absent: 0, neutral: 0 };
                 }
-                attendanceSummary[entry.regNo][entry.status]++; // Increment the count
-            }
-        }
+                attendanceSummary[entry.regNo][entry.status]++;
+            });
+        });
 
         res.json(attendanceSummary);
     } catch (error) {
