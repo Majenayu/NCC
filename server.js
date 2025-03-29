@@ -234,35 +234,42 @@ app.post("/add-attendances", async (req, res) => {
         res.status(500).json({ message: "❌ Error saving attendance", error: error.message });
     }
 });
-
 // ✅ Get Attendance within Date Range
 app.post("/get-attendances", async (req, res) => {
     const { startDate, endDate } = req.body;
+
     if (!startDate || !endDate) {
         return res.status(400).json({ message: "❌ Start and end dates are required" });
     }
 
     try {
         const records = await Attendance.find({
-            date: { $gte: startDate, $lte: endDate }
+            date: { $gte: new Date(startDate), $lte: new Date(endDate) }
         });
 
         let attendanceSummary = {};
 
-        records.forEach(record => {
-            record.attendanceData.forEach(entry => {
+        for (const record of records) {
+            for (const entry of record.attendanceData) {
                 if (!attendanceSummary[entry.regNo]) {
-                    attendanceSummary[entry.regNo] = { present: 0, absent: 0, neutral: 0 };
+                    const cadet = await Cadet.findOne({ regNo: entry.regNo }); // Fetch cadet info
+                    attendanceSummary[entry.regNo] = {
+                        name: cadet ? cadet.name : "Unknown", // Include the cadet's name
+                        present: 0,
+                        absent: 0,
+                        neutral: 0
+                    };
                 }
-                attendanceSummary[entry.regNo][entry.status]++;
-            });
-        });
+                attendanceSummary[entry.regNo][entry.status]++; // Increment the count
+            }
+        }
 
         res.json(attendanceSummary);
     } catch (error) {
         res.status(500).json({ message: "❌ Error fetching attendance data", error: error.message });
     }
 });
+
 app.get("/download-attendances", async (req, res) => {
     try {
         const { startDate, endDate, format } = req.query;
