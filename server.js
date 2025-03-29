@@ -282,7 +282,8 @@ app.get("/download-attendances", async (req, res) => {
 
         for (let record of records) {
             allDates.add(record.date);
-            record.attendanceData.forEach(entry => {
+    for (const entry of record.attendanceData) {
+
                 if (!cadetMap.has(entry.regNo)) {
                     cadetMap.set(entry.regNo, {
                        const cadet = await Cadet.findOne({ regNo: entry.regNo });
