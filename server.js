@@ -307,6 +307,7 @@ app.get("/download-attendances", async (req, res) => {
                 
             });
         }
+        }
 
         let sortedDates = Array.from(allDates).sort();
 
