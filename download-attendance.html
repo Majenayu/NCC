@@ -243,6 +243,11 @@
     <br><br>
       <title>Download Attendance</title>
      <script>
+                 function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
          function downloadAttendance(format) {
              const startDate = document.getElementById("startDate").value;
              const endDate = document.getElementById("endDate").value;
