@@ -157,48 +157,57 @@
         tbody tr:nth-child(even) {
             background-color: #e9ecef;
         }
+     
         .logout-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: #ffffff;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
+    position: fixed; /* Keep it fixed to the top right */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center; /* Center items vertically */
+    gap: 0.5rem; /* Space between icon and text */
+    padding: 0.5rem 1rem; /* Padding for better click area */
+    border-radius: 8px; /* Rounded corners */
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+    z-index: 1000; /* Ensure it stays on top of other elements */
+}
 
-        .logout-btn i {
-            font-size: 1.2rem;
-        }
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.2); /* Change background on hover */
+    color: #ffd700; /* Change text color on hover */
+}
 
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #ffd700;
-        }
-        
 
         @media (max-width: 768px) {
             .main-content {
                 padding: 1rem;
             }
 
-            input[type="date"], button {
+            table {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            button {
                 width: 80%;
                 font-size: 14px;
                 padding: 10px;
             }
 
-           .logout-btn  {
-                font-size: 14px;
-                padding: 6px 12px;
-            }
+            .logout-btn {
+        top: 10px; /* Adjust distance from the top for mobile */
+        right: 10px; /* Adjust distance from the right for mobile */
+        font-size: 0.9rem; /* Slightly smaller font size */
+        padding: 0.4rem 0.8rem; /* Adjust padding for mobile */
+    }
         }
     </style>
 </head>
