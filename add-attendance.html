@@ -4,9 +4,213 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Attendance</title>
-    <link rel="stylesheet" href="attendance.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .dashboard {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            min-height: 90vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 2rem 1rem;
+            height: 90vh;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-container img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .logo-container h2 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="date"], select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #000000;
+            background: transparent;
+            color: #ffffff;
+            margin-bottom: 15px;
+            width: 90%;
+            max-width: 300px;
+        }
+
+        button {
+            background-color: #ffd700;
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #e5c100;
+        }
+
+        table {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            color: black;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #1a237e;
+            color: #ffdf27;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #e9ecef;
+        }
+
+        .back-home {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            text-decoration: none;
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+            background-color: #007 BFF;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .back-home:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            table {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            button {
+                width: 80%;
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .back-home {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="https://res.cloudinary.com/dcd0vatd4/image/upload/v1743165814/download_rhmhhr.png" alt="Logo">
+                <h2>VVCE NCC</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="nav-item"><a href="manage-cadets.html" class="nav-link"><i class="fa-solid fa-users"></i> Manage Cadets</a></li>
+                <li class="nav-item"><a href="add-attendance.html" class="nav-link active"><i class="fa-solid fa-calendar-plus"></i> Add Attendance</a></li>
+                <li class="nav-item"><a href="attendance-status.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Attendance Status</a></li>
+                <li class="nav-item"><a href="download-attendance.html" class="nav-link"><i class="fa-solid fa-download"></i> Download Reports</a></li>
+                <li class="nav-item"><a href="refreshment.html" class="nav-link"><i class="fa-solid fa-coffee"></i> Add Refreshments Bills</a></li>
+                <li class="nav-item"><a href="refresh.html" class="nav-link"><i class="fa-solid fa-coffee"></i> Fetch Refreshments Bills</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
     <h1>Add Attendance</h1>
     <a href="home.html" class="back-home">🏠 Home</a>
 
