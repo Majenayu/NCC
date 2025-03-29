@@ -305,7 +305,7 @@ app.get("/download-attendances", async (req, res) => {
                 } else {
                     cadetData.attendance[record.date] = "-";
                 
-            });
+                }
         }
         }
 
