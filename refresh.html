@@ -89,6 +89,54 @@
             font-size: 2rem;
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
         }
+        .folder-container {
+             margin: 10px;
+             padding: 10px;
+             border: 1px solid #ccc;
+             background: #444;
+             border-radius: 5px;
+             cursor: pointer;
+             width: 200px;
+        }
+          .folder {
+             font-size: 18px;
+             font-weight: bold;
+             color: yellow;
+             padding: 5px;
+          }
+         .image-folder {
+             display: none;
+             padding: 10px;
+             background: #222;
+             border-radius: 5px;
+         }
+         .image-container img {
+             width: 150px;
+             height: auto;
+             border-radius: 10px;
+             cursor: pointer;
+         }
+         .gallery {
+             display: grid;
+             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+             gap: 10px;
+             max-width: 600px;
+             margin: auto;
+         }
+        
+        .download-btn, .replace-btn {
+             margin-top: 5px;
+             padding: 5px 10px;
+             font-size: 12px;
+             cursor: pointer;
+          border: none;
+               border-radius: 5px;
+        }
+        .download-btn {
+             background: green;
+             color: white;
+        }
+        
 
         input[type="date"], select {
             padding: 10px;
