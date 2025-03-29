@@ -260,6 +260,11 @@
     <button onclick="submitAttendance()">Submit Attendance</button>
 
     <script>
+                function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
         async function loadCadets() {
             try {
                 const res = await fetch("/get-cadets");
