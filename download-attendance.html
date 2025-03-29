@@ -240,6 +240,13 @@
     <button onclick="downloadAttendance('excel')">Download as Excel</button>
     <button onclick="downloadAttendance('word')">Download as Word</button>
     <br><br>
-   
+      <title>Download Attendance</title>
+     <script>
+         function downloadAttendance(format) {
+             const startDate = document.getElementById("startDate").value;
+             const endDate = document.getElementById("endDate").value;
+             window.location.href = `/download-attendances?startDate=${startDate}&endDate=${endDate}&format=${format}`;
+         }
+     </script>
 </body>
 </html>
