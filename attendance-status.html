@@ -281,7 +281,8 @@
                 let table = `<table>
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
+                                       <th>Name</th>
+                                        <th>Reg No</th>
                                         <th>✅ Present</th>
                                         <th>❌ Absent</th>
                                         <th>⚪ Neutral</th>
@@ -290,13 +291,14 @@
                                 </thead>
                                 <tbody>`;
 
-                for (let cadet.name in data) {
-                    const cadet = data[cadet.name];
+                for (let  regNo in data) {
+                    const cadet = data[regNo];
                     const total = cadet.present + cadet.absent + cadet.neutral;
                     const attendancePercentage = total > 0 ? ((cadet.present / total) * 100).toFixed(2) : "0.00";
 
                     table += `<tr>
-                               <td>${cadet.name}</td>
+                              <td>${cadet.name}</td> <!-- Displaying Name -->
+                             <td>${regNo}</td>
                                 <td>${cadet.present}</td>
                                 <td>${cadet.absent}</td>
                                 <td>${cadet.neutral}</td>
