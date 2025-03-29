@@ -304,7 +304,7 @@ app.get("/download-attendances", async (req, res) => {
                     cadetData.totalPresent++;
                 } else {
                     cadetData.attendance[record.date] = "-";
-                }
+                
             });
         }
 
