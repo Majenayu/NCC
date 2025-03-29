@@ -259,7 +259,7 @@ app.post("/get-attendances", async (req, res) => {
                         neutral: 0
                     };
                 attendanceSummary[entry.regNo][entry.status]++;
-            });
+           
         });
 
         res.json(attendanceSummary);
