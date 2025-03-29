@@ -290,7 +290,7 @@
                                 </thead>
                                 <tbody>`;
 
-                for (let regNo in data) {
+                for (let cadet.name in data) {
                     const cadet = data[cadet.name];
                     const total = cadet.present + cadet.absent + cadet.neutral;
                     const attendancePercentage = total > 0 ? ((cadet.present / total) * 100).toFixed(2) : "0.00";
