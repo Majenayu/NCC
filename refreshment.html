@@ -237,6 +237,11 @@
     </div> 
 
     <script>
+                function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
         document.getElementById("imageInput").addEventListener("change", function () {
             const fileList = this.files;
             const fileDisplay = document.getElementById("selectedFiles");
