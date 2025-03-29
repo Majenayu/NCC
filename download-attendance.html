@@ -1,25 +1,245 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Attendance</title>
-    <script>
-        function downloadAttendance(format) {
-            const startDate = document.getElementById("startDate").value;
-            const endDate = document.getElementById("endDate").value;
-            window.location.href = `/download-attendances?startDate=${startDate}&endDate=${endDate}&format=${format}`;
+    <title>Add Attendance - VVCE NCC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-    </script>
-    <link rel="stylesheet" href="download.css">
+
+        .dashboard {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            min-height: 90vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 2rem 1rem;
+            height: 90vh;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-container img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .logo-container h2 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .date-selection {
+            margin: 20px 0;
+        }
+
+        input[type="date"], button {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #000000;
+            background: transparent;
+            color: #000000;
+            margin-bottom: 15px;
+            width: 90%;
+            max-width: 300px;
+        }
+
+        button {
+            background-color: #ffd700;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #e5c100;
+        }
+
+        #attendanceResult {
+            margin-top: 20px;
+            color: black;
+        }
+        table {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            color: black;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #1a237e;
+            color: #ffdf27;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #e9ecef;
+        }
+     
+        .logout-btn {
+    position: fixed; /* Keep it fixed to the top right */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center; /* Center items vertically */
+    gap: 0.5rem; /* Space between icon and text */
+    padding: 0.5rem 1rem; /* Padding for better click area */
+    border-radius: 8px; /* Rounded corners */
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+    z-index: 1000; /* Ensure it stays on top of other elements */
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.2); /* Change background on hover */
+    color: #ffd700; /* Change text color on hover */
+}
+
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            table {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            button {
+                width: 80%;
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .logout-btn {
+        top: 10px; /* Adjust distance from the top for mobile */
+        right: 10px; /* Adjust distance from the right for mobile */
+        font-size: 0.9rem; /* Slightly smaller font size */
+        padding: 0.4rem 0.8rem; /* Adjust padding for mobile */
+    }
+        }
+    </style>
 </head>
 <body>
+       <!-- Logout Button -->
+    <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="https://res.cloudinary.com/dcd0vatd4/image/upload/v1743165814/download_rhmhhr.png" alt="Logo">
+                <h2>VVCE NCC</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                <li class="nav-item"><a href="manage-cadets.html" class="nav-link"><i class="fa-solid fa-users"></i> Manage Cadets</a></li>
+                <li class="nav-item"><a href="add-attendance.html" class="nav-link "><i class="fa-solid fa-calendar-plus"></i> Add Attendance</a></li>
+                <li class="nav-item"><a href="attendance-status.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Attendance Status</a></li>
+                <li class="nav-item"><a href="download-attendance.html" class="nav-link active"><i class="fa-solid fa-download"></i> Download Reports</a></li>
+                <li class="nav-item"><a href="refreshment.html" class="nav-link"><i class="fa-solid fa-coffee"></i> Add Refreshments Bills</a></li>
+                <li class="nav-item"><a href="refresh.html" class="nav-link"><i class="fa-solid fa-coffee"></i> Fetch Refreshments Bills</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
     <h1>Download Attendance</h1>
     <input type="date" id="startDate">
     <input type="date" id="endDate">
     <button onclick="downloadAttendance('excel')">Download as Excel</button>
     <button onclick="downloadAttendance('word')">Download as Word</button>
     <br><br>
-    <a href="home.html" class="back-home">🏠 Home</a>
+   
 </body>
 </html>
