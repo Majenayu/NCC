@@ -261,8 +261,9 @@ app.post("/get-attendances", async (req, res) => {
                 }
                 attendanceSummary[entry.regNo][entry.status]++;
            
-        }
-                                          }
+          });
+        });
+                                          
 
         res.json(attendanceSummary);
     } catch (error) {
