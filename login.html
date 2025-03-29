@@ -30,35 +30,41 @@
     <script>
         const BASE_URL = "https://ncc-qmzp.onrender.com"; // ✅ Backend URL for Render
 
-     async function login() {
-    const email = document.getElementById("email").value;
+        document.getElementById("loginForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
-             const password = document.getElementById("name").value;
 
-    const response = await fetch("https://ncc-qmzp.onrender.com/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-    });
+    try {
+        const response = await fetch("https://ncc-qmzp.onrender.com/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: username, password })
+        });
 
-    const data = await response.json();
-    
-    if (data.success) {
-        localStorage.setItem("user", JSON.stringify({ 
-            email: data.user.email, 
-            role: data.user.role // Store role (e.g., "cadet", "ranked", "officer", "admin")
-        }));
+        const result = await response.json();
 
-        // Redirect based on role
-        if (data.user.role === "cadet") {
-            window.location.href = "home_cadet.html"; 
+        if (response.ok) {
+            alert("Login successful!");
+            localStorage.setItem("user", JSON.stringify(result.user));
+
+            // Redirect based on role
+            if (result.user.role === "admin") {
+                window.location.href = "home_admin.html";
+            } else if (result.user.role === "ranked" || result.user.role === "officer") {
+                window.location.href = "home_ranked.html";
+            } else {
+                window.location.href = "home_cadet.html";
+            }
         } else {
-            window.location.href = "home_ranked.html";
+            alert(result.message || "Login failed!");
         }
-    } else {
-        alert("Invalid credentials");
+    } catch (error) {
+        alert("Login failed! Please try again.");
+        console.error("Login Error:", error);
     }
-}
+});
 
     </script>
 
