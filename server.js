@@ -252,18 +252,11 @@ app.post("/get-attendances", async (req, res) => {
         records.forEach(record => {
             record.attendanceData.forEach(entry => {
                 if (!attendanceSummary[entry.regNo]) {
-                     attendanceSummary[entry.regNo] = {
-                        name: cadet ? cadet.name : "Unknown", // Include the cadet's name
-                        present: 0,
-                        absent: 0,
-                        neutral: 0
-                    };
+                    attendanceSummary[entry.regNo] = { present: 0, absent: 0, neutral: 0 };
                 }
                 attendanceSummary[entry.regNo][entry.status]++;
-           
-          });
+            });
         });
-                                          
 
         res.json(attendanceSummary);
     } catch (error) {
