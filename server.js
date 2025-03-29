@@ -288,7 +288,8 @@ app.get("/download-attendances", async (req, res) => {
                       const cadet = await Cadet.findOne({ regNo: entry.regNo });
                     cadetMap.set(entry.regNo, {
                      
-                        name: cadet ? cadet.name : `Cadet ${entry.regNo}`,
+                       name: cadet ? `Cadet ${cadet.name}` : `Cadet ${entry.regNo}`,
+
 
                         attendance: {},
                         totalPresent: 0,
