@@ -129,30 +129,33 @@
             margin-top: 20px;
             color: black;
         }
- .logout-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: #ffffff;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
+        table {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
             border-radius: 8px;
-            transition: all 0.3s ease;
+            overflow: hidden;
+            color: black;
         }
 
-        .logout-btn i {
-            font-size: 1.2rem;
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
         }
 
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #ffd700;
+        th {
+            background-color: #1a237e;
+            color: #ffdf27;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #e9ecef;
         }
         .logout-btn {
             position: fixed;
@@ -212,8 +215,8 @@
             <ul class="nav-menu">
                 <li class="nav-item"><a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                 <li class="nav-item"><a href="manage-cadets.html" class="nav-link"><i class="fa-solid fa-users"></i> Manage Cadets</a></li>
-                <li class="nav-item"><a href="add-attendance.html" class="nav-link active"><i class="fa-solid fa-calendar-plus"></i> Add Attendance</a></li>
-                <li class="nav-item"><a href="attendance-status.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Attendance Status</a></li>
+                <li class="nav-item"><a href="add-attendance.html" class="nav-link "><i class="fa-solid fa-calendar-plus"></i> Add Attendance</a></li>
+                <li class="nav-item"><a href="attendance-status.html" class="nav-link active"><i class="fa-solid fa-calendar-check"></i> Attendance Status</a></li>
                 <li class="nav-item"><a href="download-attendance.html" class="nav-link"><i class="fa-solid fa-download"></i> Download Reports</a></li>
                 <li class="nav-item"><a href="refreshment.html" class="nav-link"><i class="fa-solid fa-coffee"></i> Add Refreshments Bills</a></li>
                 <li class="nav-item"><a href="refresh.html" class="nav-link"><i class="fa-solid fa-coffee"></i> Fetch Refreshments Bills</a></li>
