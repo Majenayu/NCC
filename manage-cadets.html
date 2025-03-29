@@ -228,6 +228,10 @@
         }
     </style>
     <script>
+          function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
         const BASE_URL = "https://ncc-qmzp.onrender.com"; // Backend API
 
         // Load cadets on page load
