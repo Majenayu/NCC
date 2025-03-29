@@ -327,6 +327,58 @@
                 alert("Upload failed, try again!");
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        alert("Please log in first!");
+        window.location.href = "login.html"; 
+        return;
+    }
+
+    const categories = user.categories;
+
+    // Hide elements if the user does not have access
+    if (!categories.includes("ranked") && !categories.includes("officer") && !categories.includes("admin")) {
+        document.getElementById("add-attendance").style.display = "none";
+        document.getElementById("fetch-bills").style.display = "none";
+        document.getElementById("mark-attendance").style.display = "none";
+    }
+
+    if (!categories.includes("officer") && !categories.includes("admin")) {
+        document.getElementById("manage-cadets").style.display = "none";
+    }
+});
+
     </script>
 
 </body>
