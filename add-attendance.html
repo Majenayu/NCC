@@ -156,6 +156,7 @@
             background: rgba(255, 255, 255, 0.2);
             color: #ffd700;
         }
+        
 
         @media (max-width: 768px) {
             .main-content {
@@ -182,6 +183,7 @@
                 padding: 6px 12px;
             }
         }
+
     </style>
 </head>
 <body>
@@ -209,17 +211,20 @@
         <div class="main-content">
     <h1>Add Attendance</h1>
   
-
-    <label for="attendanceDate">Select Date:</label>
-    <input type="date" id="attendanceDate" onchange="loadPreviousAttendance()">
-
-    <label for="globalReason">Apply Reason to All:</label>
-    <select id="globalReason" onchange="applyReasonToAll()">
-        <option value="">Select Reason</option>
-        <option value="unit">Unit</option>
-        <option value="college">College</option>
-        <option value="both">Both</option>
-    </select>
+    <div class="form-group">
+        <label for="attendanceDate">Select Date:</label>
+        <input type="date" id="attendanceDate" onchange="loadPreviousAttendance()">
+    </div>
+    
+    <div class="form-group">
+        <label for="globalReason">Apply Reason to All:</label>
+        <select id="globalReason" onchange="applyReasonToAll()">
+            <option value="">Select Reason</option>
+            <option value="unit">Unit</option>
+            <option value="college">College</option>
+            <option value="both">Both</option>
+        </select>
+    </div>
 
     <h2>Cadet List</h2>
     <table>
