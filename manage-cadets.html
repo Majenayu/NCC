@@ -101,28 +101,35 @@
         
 
         .form-container input {
-            padding: 0.8rem;
-            margin: 0.5rem;
-            border-radius: 8px;
-            border: 1px solid #160202;
-            font-size: 1rem;
-            width: 250px;
-        }
+    width: 100%; /* Full width inside container */
+    max-width: 300px; /* Set max width */
+    padding: 10px;
+    font-size: 1.1rem;
+    border: 2px solid #010101; /* Yellow border */
+    background: transparent;
+    color: #000000; /* White text */
+    text-align: center;
+}
+    
+.form-container input::placeholder {
+    color: #020200; /* Yellow placeholder */
+    opacity: 0.7;
+}
 
-        .form-container button {
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            background: #ffee04;
-            color: #000000;
-            border: none;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
+.form-container button {
+    width: 100%;
+    max-width: 150px;
+    background: #ffd700; /* Yellow button */
+    color: #000;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: 2px solid #4b410a;
+}
 
-        .form-container button:hover {
-            background: #e5ff00;
-        }
+.form-container button:hover {
+    background: #e5c100; /* Slightly darker yellow on hover */
+}
+
 
         table {
             width: 100%;
@@ -141,7 +148,7 @@
 
         th {
             background-color: #1a237e;
-            color: #ffd700;
+            color: #ffdf27;
         }
 
         .remove-btn {
@@ -184,7 +191,10 @@
             color: #ffd700;
         }
         .form-container h2 {
-    color: black;
+    color: #ffd700; /* Change to match the theme */
+    font-size: 1.8rem; /* Adjust the font size */
+    text-align: center;
+    margin-bottom: 1rem;
 }
 
 
@@ -370,4 +380,3 @@
 
 </body>
 </html>
-
