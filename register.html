@@ -39,36 +39,37 @@
 
 <script>
     document.querySelector("#registration-form").addEventListener("submit", async function (event) {
-        event.preventDefault();
+    event.preventDefault();
 
-        const name = document.getElementById("name").value; 
-        const password = document.getElementById("password").value;
-        const confirmPassword = document.getElementById("confirm-password").value;
+    const name = document.getElementById("name").value; 
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
 
-        if (password !== confirmPassword) {
-            alert("Passwords do not match!");
-            return;
+    if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+    }
+
+    try {
+        const response = await fetch("https://ncc-qmzp.onrender.com/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, password }) 
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert("Registration successful!");
+            window.location.href = "login.html";
+        } else {
+            alert(result.message);
         }
+    } catch (error) {
+        alert("Registration failed! Please try again.");
+    }
+});
 
-        try {
-            const response = await fetch("https://ncc-qmzp.onrender.com/register", { // ✅ Updated API URL
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, password }) 
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                alert("Registration successful!");
-                window.location.href = "login.html"; // Redirect to login page
-            } else {
-                alert(result.message);
-            }
-        } catch (error) {
-            alert("Registration failed! Please try again.");
-        }
-    });
 </script>
 
 </body>
