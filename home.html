@@ -168,6 +168,7 @@
             padding: 0.5rem 1rem;
             border-radius: 8px;
             transition: all 0.3s ease;
+            z-index: 1000; /* Make sure it's on top of everything */
         }
 
         .logout-btn i {
@@ -178,7 +179,6 @@
             background: rgba(255, 255, 255, 0.2);
             color: #ffd700;
         }
-
         @media (max-width: 768px) {
             .dashboard {
                 flex-direction: column;
@@ -192,10 +192,30 @@
                 margin-bottom: 1rem;
             }
 
-            .quick-actions {
+    .main-content {
+        padding: 1rem;
+    }
+
+
+    .quick-actions {
                 flex-direction: column;
                 align-items: center;
             }
+
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .logout-btn {
+        
+        width: 30%;
+        justify-content: center;
+        margin-top: 10px;
+        top: 10px; /* Adjust to make it closer to the top */
+        right: 20px;
+    }
 
             .dashboard-grid {
                 grid-template-columns: 1fr;
