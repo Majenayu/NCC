@@ -129,14 +129,25 @@ app.post("/login", async (req, res) => {
 
     try {
         // ✅ Special case: user "b" with password "k"
-        if (name === "b" && password === "k") {
+        if (name === "Admin" && password === "Nccvvce") {
             const token = jwt.sign({ name: "b" }, SECRET_KEY, { expiresIn: "1h" });
 
             return res.json({
                 message: "✅ Login successful",
                 token,
-                redirectTo: "/home2.html",
+                redirectTo: "/home.html",
                 user: { name: "b" }
+            });
+        }
+
+             // 👉 Special Case 2: hardcoded user "rank"
+        if (name === "Rank" && password === "Up") {
+            const token = jwt.sign({ name: "rank" }, SECRET_KEY, { expiresIn: "1h" });
+            return res.json({
+                message: "✅ Login successful",
+                token,
+                redirectTo: "/home2.html",
+                user: { name: "rank" }
             });
         }
 
@@ -157,7 +168,7 @@ app.post("/login", async (req, res) => {
         res.json({
             message: "✅ Login successful",
             token,
-            redirectTo: "/home.html", // default for others
+            redirectTo: "/home3.html", // default for others
             user,
         });
 
