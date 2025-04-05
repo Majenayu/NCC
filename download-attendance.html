@@ -183,9 +183,46 @@
 
 
         @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
+            
+    
+    .dashboard {
+                flex-direction: column;
+                width: 100%;
+                min-height: auto;
             }
+
+            .sidebar {
+                width: 90%;
+                height: auto;
+                margin-bottom: 1rem;
+            }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+
+    .quick-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .logout-btn {
+        
+        width: 30%;
+        justify-content: center;
+        margin-top: 10px;
+        top: 10px; /* Adjust to make it closer to the top */
+        right: 20px;
+    }
+
+
 
             table {
                 width: 100%;
