@@ -1,0 +1,392 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Attendance - VVCE NCC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dashboard {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            min-height: 90vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 2rem 1rem;
+            height: 90vh;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-container img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .logo-container h2 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .date-selection {
+            margin: 20px 0;
+        }
+
+        input[type="date"], button {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #000000;
+            background: transparent;
+            color: #000000;
+            margin-bottom: 15px;
+            width: 90%;
+            max-width: 300px;
+        }
+
+        button {
+            background-color: #ffd700;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #e5c100;
+        }
+
+        #attendanceResult {
+            margin-top: 20px;
+            color: black;
+        }
+        table {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            color: black;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #1a237e;
+            color: #ffdf27;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #e9ecef;
+        }
+     
+        .logout-btn {
+    position: fixed; /* Keep it fixed to the top right */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center; /* Center items vertically */
+    gap: 0.5rem; /* Space between icon and text */
+    padding: 0.5rem 1rem; /* Padding for better click area */
+    border-radius: 8px; /* Rounded corners */
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+    z-index: 1000; /* Ensure it stays on top of other elements */
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.2); /* Change background on hover */
+    color: #ffd700; /* Change text color on hover */
+}
+
+@media (max-width: 768px) {
+
+
+
+          
+   
+  
+
+    
+    .dashboard {
+                flex-direction: column;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .sidebar {
+                width: 90%;
+                height: auto;
+                margin-bottom: 1rem;
+            }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+
+    .quick-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+    table {
+        width: 100%;
+        font-size: 14px;
+        overflow-x: auto;
+        display: block;
+    }
+
+    table thead, table tbody, table tr, table th, table td {
+        display: block;
+        text-align: left;
+    }
+
+    table thead {
+        display: none;
+    }
+
+    table tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #fff;
+        padding: 10px;
+    }
+
+    table td {
+        padding: 6px 10px;
+        border: none;
+        position: relative;
+        color: #000;
+    }
+
+    table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #333;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    input[type="date"], select {
+        width: 100%;
+    }
+    .logout-btn {
+        
+        width: 30%;
+        justify-content: center;
+        margin-top: 10px;
+        top: 10px; /* Adjust to make it closer to the top */
+        right: 20px;
+    }
+    
+
+
+      
+}
+    </style>
+</head>
+<body>
+       <!-- Logout Button -->
+    <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="https://res.cloudinary.com/dcd0vatd4/image/upload/v1743165814/download_rhmhhr.png" alt="Logo">
+                <h2>VVCE NCC</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="home3.html" class="nav-link"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            
+                <li class="nav-item"><a href="attendance-status3.html" class="nav-link active"><i class="fa-solid fa-calendar-check"></i> Attendance Status</a></li>
+                <li class="nav-item"><a href="download-attendance3.html" class="nav-link"><i class="fa-solid fa-download"></i> Download Reports</a></li>
+                <li class="nav-item"><a href="refreshment3.html" class="nav-link"><i class="fa-solid fa-coffee"></i> Add Refreshments Bills</a></li>
+               
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <h1>Add Attendance</h1>
+            <div class="date-selection">
+                <label for="startDate">📅 Start Date:</label>
+                <input type="date" id="startDate">
+                <br><br>
+                <label for="endDate">📅 End Date:</label>
+                <input type="date" id="endDate">
+                <br><br>
+                <button onclick="getAttendanceStatus()">Get Attendance</button>
+            </div>
+
+            <div id="attendanceResult"></div>
+        </div>
+    </div>
+
+    <script>
+        async function getAttendanceStatus() {
+            const startDateInput = document.getElementById("startDate").value;
+            const endDateInput = document.getElementById("endDate").value;
+            const result = document.getElementById("attendanceResult");
+
+            if (!startDateInput || !endDateInput) {
+                result.innerHTML = "<p class='error-message'>⚠️ Please select both start and end dates.</p>";
+                return;
+            }
+
+            const startDate = new Date(startDateInput).toISOString();
+            const endDate = new Date(endDateInput).toISOString();
+
+            try {
+                const res = await fetch("/get-attendances", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ startDate, endDate }),
+                });
+
+                const data = await res.json();
+                result.innerHTML = "";
+
+                if (Object.keys(data).length === 0) {
+                    result.innerHTML = "<p class='no-data-message'>📌 No attendance data found for the selected period.</p>";
+                    return;
+                }
+
+                let table = `<table>
+                                <thead>
+                                    <tr>
+                                      
+                                        <th>Reg No</th>
+                                        <th>✅ Present</th>
+                                        <th>❌ Absent</th>
+                                        <th>⚪ Neutral</th>
+                                        <th>📊 Attendance %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+
+                for (let  regNo in data) {
+                    const cadet = data[regNo];
+                    const total = cadet.present + cadet.absent + cadet.neutral;
+                    const attendancePercentage = total > 0 ? ((cadet.present / total) * 100).toFixed(2) : "0.00";
+
+                    table += `<tr>
+                            
+                             <td>${regNo}</td>
+                                <td>${cadet.present}</td>
+                                <td>${cadet.absent}</td>
+                                <td>${cadet.neutral}</td>
+                                <td class="percentage">${attendancePercentage}%</td>
+                            </tr>`;
+                }
+
+ table += `</tbody></table>`;
+                result.innerHTML = table;
+            } catch (error) {
+                console.error("Error fetching attendance data:", error);
+                result.innerHTML = "<p class='error-message'>❌ Error fetching attendance data. Please try again.</p>";
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

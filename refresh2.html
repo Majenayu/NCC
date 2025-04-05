@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .dashboard {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            min-height: 90vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 2rem 1rem;
+            height: 90vh;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-container img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .logo-container h2 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .folder-container {
+             margin: 10px;
+             padding: 10px;
+             border: 1px solid #ccc;
+             background: #444;
+             border-radius: 5px;
+             cursor: pointer;
+             width: 200px;
+        }
+          .folder {
+             font-size: 18px;
+             font-weight: bold;
+             color: yellow;
+             padding: 5px;
+          }
+         .image-folder {
+             display: none;
+             padding: 10px;
+             background: #222;
+             border-radius: 5px;
+         }
+         .image-container img {
+             width: 150px;
+             height: auto;
+             border-radius: 10px;
+             cursor: pointer;
+         }
+         .gallery {
+             display: grid;
+             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+             gap: 10px;
+             max-width: 600px;
+             margin: auto;
+         }
+        
+        .download-btn, .replace-btn {
+             margin-top: 5px;
+             padding: 5px 10px;
+             font-size: 12px;
+             cursor: pointer;
+          border: none;
+               border-radius: 5px;
+        }
+        .download-btn {
+             background: green;
+             color: white;
+        }
+        
+
+        input[type="date"], select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #000000;
+            background: transparent;
+            color: #000000;
+            margin-bottom: 15px;
+            width: 90%;
+            max-width: 300px;
+        }
+
+        button {
+            background-color: #ffd700;
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #e5c100;
+        }
+
+        table {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            color: black;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #1a237e;
+            color: #ffdf27;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #e9ecef;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn i {
+            font-size: 1.2rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffd700;
+        }
+        .file-label {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #ffd700;
+    color: #000;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    border: 2px solid #ffd700;
+    transition: background 0.3s ease, border 0.3s ease;
+    margin-top: 15px;
+}
+        .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top */
+}
+
+.modal-content {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 10px;
+    cursor: pointer;
+}
+        
+
+.file-label:hover {
+    background-color: #e5c100;
+    border: 2px solid #e5c100;
+}
+
+/* Box around the selected files */
+#selectedFiles {
+    margin-top: 10px;
+    padding: 10px;
+    width: 90%;
+    max-width: 300px;
+    min-height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    border: 2px dashed #ffd700;
+    color: #ffffff;
+    text-align: center;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+ .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            z-index: 1000; /* Make sure it's on top of everything */
+        }
+
+        .logout-btn i {
+            font-size: 1.2rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffd700;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .sidebar {
+                width: 90%;
+                height: auto;
+                margin-bottom: 1rem;
+            }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+
+    .quick-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .logout-btn {
+        
+        width: 30%;
+        justify-content: center;
+        margin-top: 10px;
+        top: 10px; /* Adjust to make it closer to the top */
+        right: 20px;
+    }
+
+            table {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+            button {
+                width: 80%;
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            
+        }
+
+    </style>
+</head>
+<body>
+      <!-- Logout Button -->
+    <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="https://res.cloudinary.com/dcd0vatd4/image/upload/v1743165814/download_rhmhhr.png" alt="Logo">
+                <h2>VVCE NCC</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="home2.html" class="nav-link"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+               <li class="nav-item"><a href="add-attendance2.html" class="nav-link "><i class="fa-solid fa-calendar-plus"></i> Add Attendance</a></li>
+                <li class="nav-item"><a href="attendance-status2.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Attendance Status</a></li>
+                <li class="nav-item"><a href="download-attendance2.html" class="nav-link"><i class="fa-solid fa-download"></i> Download Reports</a></li>
+                <li class="nav-item"><a href="refreshment2.html" class="nav-link "><i class="fa-solid fa-coffee"></i> Add Refreshments Bills</a></li>
+                <li class="nav-item"><a href="refresh2.html" class="nav-link active"><i class="fa-solid fa-coffee"></i> Fetch Refreshments Bills</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+    <h2>Uploaded Images</h2>
+
+  
+    
+    <div class="gallery" id="gallery"></div>
+    <button onclick="fetchImages()">Refresh Images</button>
+  
+    <!-- Image Fullscreen Modal -->
+    <div id="imageModal" class="modal" onclick="closeFullscreen()">
+        <img id="modalImg" class="modal-content">
+    </div>
+
+<script>
+            function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+   async function fetchImages() {
+    try {
+        const response = await fetch("https://ncc-qmzp.onrender.com/images");
+        const data = await response.json();
+        const gallery = document.getElementById("gallery");
+        gallery.innerHTML = "";
+
+        if (!data.data.length) {
+            gallery.innerHTML = "<p>No images found</p>";
+            return;
+        }
+
+        data.data.forEach(entry => {
+            // Create a folder container (date)
+            const folderContainer = document.createElement("div");
+            folderContainer.classList.add("folder-container");
+
+            // Create the folder (date)
+            const folder = document.createElement("div");
+            folder.classList.add("folder");
+            folder.textContent = `📁 ${entry.date}`;
+            folder.onclick = () => {
+                imagesDiv.style.display = imagesDiv.style.display === "none" ? "block" : "none";
+            };
+
+            // Create a div for images (Initially hidden)
+            const imagesDiv = document.createElement("div");
+            imagesDiv.style.display = "none"; // Hidden until clicked
+            imagesDiv.classList.add("image-folder");
+              
+    entry.images.forEach(imageUrl => {
+                const imgContainer = document.createElement("div");
+                imgContainer.classList.add("image-container");
+
+                const imgElement = document.createElement("img");
+                imgElement.src = imageUrl;
+                imgElement.onclick = () => openFullscreen(imageUrl);
+
+                const downloadBtn = document.createElement("button");
+                downloadBtn.textContent = "📥 Download";
+                downloadBtn.classList.add("download-btn");
+                downloadBtn.onclick = () => downloadImage(imageUrl);
+
+
+
+
+                imgContainer.appendChild(imgElement);
+                imgContainer.appendChild(downloadBtn);
+               
+                imagesDiv.appendChild(imgContainer);
+            });
+
+
+            folderContainer.appendChild(folder);
+            folderContainer.appendChild(imagesDiv);
+            gallery.appendChild(folderContainer);
+        });
+    } catch (error) {
+        console.error("Error fetching images:", error);
+        document.getElementById("gallery").innerHTML = "<p>Error loading images</p>";
+    }
+}
+
+
+function openFullscreen(imageUrl) {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImg");
+
+    modal.style.display = "flex";  // Show modal
+    modalImg.src = imageUrl;       // Set image source
+}
+
+function closeFullscreen() {
+    document.getElementById("imageModal").style.display = "none";
+}
+
+async function downloadImage(imageUrl) {
+    try {
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "parade_image.jpg";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        window.URL.revokeObjectURL(url); // Clean up
+    } catch (error) {
+        console.error("Error downloading image:", error);
+    }
+}
+
+  
+
+// ✅ Fetch images when page loads
+window.onload = () => fetchImages();
+</script>
+</body>
+</html>

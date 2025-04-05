@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - VVCE NCC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dashboard {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            min-height: 90vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 2rem 1rem;
+            height: 90vh;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-container img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .logo-container h2 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: #ffd700;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .welcome-text h1 {
+            color: #ffd700;
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .quick-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .quick-btn {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .quick-btn i {
+            font-size: 1.2rem;
+        }
+
+        .quick-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffd700;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .dashboard-card h3 {
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-card p {
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            z-index: 1000; /* Make sure it's on top of everything */
+        }
+
+        .logout-btn i {
+            font-size: 1.2rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffd700;
+        }
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .sidebar {
+                width: 90%;
+                height: auto;
+                margin-bottom: 1rem;
+            }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+
+    .quick-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .logout-btn {
+        
+        width: 30%;
+        justify-content: center;
+        margin-top: 10px;
+        top: 10px; /* Adjust to make it closer to the top */
+        right: 20px;
+    }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logout Button -->
+    <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="https://res.cloudinary.com/dcd0vatd4/image/upload/v1743165814/download_rhmhhr.png">
+                <h2>VVCE NCC</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="home3.html" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a></li>
+               <li class="nav-item">
+                    <a href="attendance-status3.html" class="nav-link">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Attendance Status</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="download-attendance3.html" class="nav-link">
+                        <i class="fas fa-download"></i>
+                        <span>Download Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="refreshment3.html" class="nav-link">
+                        <i class="fas fa-coffee"></i>
+                        <span>Add Refreshments Bills</span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+        
+
+        <div class="main-content">
+            <div class="welcome-text">
+                <h1>Welcome to VVCE NCC Dashboard</h1>
+            </div>
+
+            <!-- Quick Action Bar -->
+            <div class="quick-actions">
+                <a href="attendance-status3.html" class="quick-btn"><i class="fas fa-chart-line"></i> View Attendance</a>
+                 <a href="download-attendance3.html" class="quick-btn"><i class="fas fa-chart-line"></i> Download Attendance</a>
+            </div>
+
+             <div class="dashboard-grid">
+    <div class="dashboard-card">
+        <h3>Total Cadets</h3>
+        <p id="totalCadets">0</p> <!-- Add this ID -->
+    </div>
+    <div class="dashboard-card">
+        <h3>Cadets Present Today</h3>
+        <p id="attendedToday">0</p> <!-- Add this ID -->
+    </div>
+</div>
+
+<p id="attendanceMessage"></p> <!-- Add this ID for messages -->
+
+    <script>
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+        const BASE_URL = 'https://ncc-qmzp.onrender.com'; // Replace with your backend URL
+
+async function fetchDashboardData() {
+    try {
+        const response = await fetch('https://ncc-qmzp.onrender.com/dashboard-stats');
+        const data = await response.json();
+
+        console.log('Dashboard Data:', data); // Debugging
+
+        // Select elements safely
+        const totalCadetsElement = document.getElementById('totalCadets');
+        const attendedTodayElement = document.getElementById('attendedToday');
+        const messageElement = document.getElementById('attendanceMessage');
+
+        if (!totalCadetsElement || !attendedTodayElement || !messageElement) {
+            console.error("One or more elements not found in the HTML.");
+            return;
+        }
+
+        // Update values only if elements exist
+        totalCadetsElement.textContent = data.totalCadets;
+        attendedTodayElement.textContent = data.attendedToday;
+
+        if (data.message) {
+            messageElement.textContent = data.message;
+            messageElement.style.color = "red"; // Show message in red
+        } else {
+            messageElement.textContent = ""; // Clear message if data exists
+        }
+    } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+    }
+}
+
+// Ensure script runs after the DOM is loaded
+document.addEventListener("DOMContentLoaded", fetchDashboardData);
+
+
+// Call the function on page load
+fetchDashboardData();
+    </script>
+
+</body>
+</html>
