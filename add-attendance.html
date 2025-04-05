@@ -162,6 +162,7 @@
             padding: 0.5rem 1rem;
             border-radius: 8px;
             transition: all 0.3s ease;
+            z-index: 1000; /* Make sure it's on top of everything */
         }
 
         .logout-btn i {
@@ -172,46 +173,118 @@
             background: rgba(255, 255, 255, 0.2);
             color: #ffd700;
         }
-        
+
+
 
         @media (max-width: 768px) {
-            .main-content {
-                padding: 1rem;
-            }
-
-            table {
+    
+    
+            .dashboard {
+                flex-direction: column;
                 width: 100%;
-                font-size: 14px;
+                min-height: auto;
             }
 
-            th, td {
-                padding: 8px;
+            .sidebar {
+                width: 90%;
+                height: auto;
+                margin-bottom: 1rem;
             }
 
-            button {
-                width: 80%;
-                font-size: 14px;
-                padding: 10px;
+    .main-content {
+        padding: 1rem;
+    }
+
+
+    .quick-actions {
+                flex-direction: column;
+                align-items: center;
             }
 
-            .logout-btn  {
-                font-size: 14px;
-                padding: 6px 12px;
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
             }
-        }
+
+
+    table {
+        width: 100%;
+        font-size: 14px;
+        overflow-x: auto;
+        display: block;
+    }
+
+    table thead, table tbody, table tr, table th, table td {
+        display: block;
+        text-align: left;
+    }
+
+    table thead {
+        display: none;
+    }
+
+    table tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #fff;
+        padding: 10px;
+    }
+
+    table td {
+        padding: 6px 10px;
+        border: none;
+        position: relative;
+        color: #000;
+    }
+
+    table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #333;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    input[type="date"], select {
+        width: 100%;
+    }
+    .logout-btn {
+        
+        width: 30%;
+        justify-content: center;
+        margin-top: 10px;
+        top: 10px; /* Adjust to make it closer to the top */
+        right: 20px;
+    }
+    
+
+
+      
+}
+
 
     </style>
 </head>
 <body>
-      <!-- Logout Button -->
+        <!-- Logout Button -->
     <button class="logout-btn" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i> Logout
     </button>
+
     <div class="dashboard">
         <div class="sidebar">
+           
             <div class="logo-container">
                 <img src="https://res.cloudinary.com/dcd0vatd4/image/upload/v1743165814/download_rhmhhr.png" alt="Logo">
                 <h2>VVCE NCC</h2>
+                
             </div>
             <ul class="nav-menu">
                 <li class="nav-item"><a href="home.html" class="nav-link"><i class="fa-solid fa-house"></i> Dashboard</a></li>
@@ -223,6 +296,7 @@
                 <li class="nav-item"><a href="refresh.html" class="nav-link"><i class="fa-solid fa-coffee"></i> Fetch Refreshments Bills</a></li>
             </ul>
         </div>
+        
 
         <div class="main-content">
     <h1>Add Attendance</h1>
