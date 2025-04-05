@@ -128,7 +128,21 @@ app.post("/login", async (req, res) => {
     const { name, password } = req.body;
 
     try {
+        // ✅ Special case: user "b" with password "k"
+        if (name === "b" && password === "k") {
+            const token = jwt.sign({ name: "b" }, SECRET_KEY, { expiresIn: "1h" });
+
+            return res.json({
+                message: "✅ Login successful",
+                token,
+                redirectTo: "/home2.html",
+                user: { name: "b" }
+            });
+        }
+
+        // ✅ Regular DB check for all other users
         const user = await User.findOne({ name });
+
         if (!user) {
             return res.status(400).json({ message: "Invalid username or password" });
         }
@@ -139,7 +153,14 @@ app.post("/login", async (req, res) => {
         }
 
         const token = jwt.sign({ name: user.name }, SECRET_KEY, { expiresIn: "1h" });
-        res.json({ message: "✅ Login successful", token, user });
+
+        res.json({
+            message: "✅ Login successful",
+            token,
+            redirectTo: "/home.html", // default for others
+            user,
+        });
+
     } catch (error) {
         res.status(500).json({ message: "❌ Server error" });
     }
