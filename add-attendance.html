@@ -129,6 +129,7 @@
             overflow: hidden;
             color: black;
         }
+        
 
         th, td {
             border: 1px solid #ddd;
@@ -222,6 +223,21 @@
     table thead {
         display: none;
     }
+            table td[colspan="3"] {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    gap: 8px;
+}
+
+table td[colspan="3"] label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    color: black;
+}
+
 
     table tr {
         margin-bottom: 15px;
