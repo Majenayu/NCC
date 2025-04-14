@@ -267,6 +267,7 @@ app.post("/add-attendances", async (req, res) => {
     }
 });
 // ✅ Get Attendance within Date Range
+// ✅ Get Attendance within Date Range — With Cadet Name
 app.post("/get-attendances", async (req, res) => {
     const { startDate, endDate } = req.body;
     if (!startDate || !endDate) {
@@ -280,6 +281,7 @@ app.post("/get-attendances", async (req, res) => {
 
         let attendanceSummary = {};
 
+        // Step 1: Count attendance per regNo
         records.forEach(record => {
             record.attendanceData.forEach(entry => {
                 if (!attendanceSummary[entry.regNo]) {
@@ -289,7 +291,31 @@ app.post("/get-attendances", async (req, res) => {
             });
         });
 
-        res.json(attendanceSummary);
+        // Step 2: Fetch cadet names from DB
+        const cadets = await Cadet.find({}, 'regNo name'); // Only fetch regNo and name
+
+        // Step 3: Attach names and calculate %
+        const response = Object.keys(attendanceSummary).map(regNo => {
+            const cadet = cadets.find(c => c.regNo === regNo);
+            const name = cadet ? cadet.name : "N/A"; // fallback if name not found
+
+            const present = attendanceSummary[regNo].present || 0;
+            const absent = attendanceSummary[regNo].absent || 0;
+            const neutral = attendanceSummary[regNo].neutral || 0;
+            const total = present + absent;
+            const percentage = total > 0 ? ((present / total) * 100).toFixed(2) + '%' : '0.00%';
+
+            return {
+                regNo,
+                name,
+                present,
+                absent,
+                neutral,
+                percentage
+            };
+        });
+
+        res.json(response);
     } catch (error) {
         res.status(500).json({ message: "❌ Error fetching attendance data", error: error.message });
     }
