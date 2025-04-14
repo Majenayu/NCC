@@ -353,21 +353,22 @@
 
                 cadets.forEach((cadet, index) => {
                     const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${cadet.name} (${cadet.regNo})</td>
-                        <td><input type="radio" name="${cadet.regNo}" value="present"></td>
-                        <td><input type="radio" name="${cadet.regNo}" value="absent"></td>
-                        <td><input type="radio" name="${cadet.regNo}" value="neutral" checked></td>
-                        <td>
-                            <select name="reason-${cadet.regNo}" class="reason-select">
-                                <option value="">Select Reason</option>
-                                <option value="unit">Unit</option>
-                                <option value="college">College</option>
-                                <option value="both">Both</option>
-                            </select>
-                        </td>
-                    `;
+                   row.innerHTML = `
+    <td data-label="Sl. No">${index + 1}</td>
+    <td data-label="Name (Reg No)">${cadet.name} (${cadet.regNo})</td>
+    <td data-label="✅ Present"><input type="radio" name="${cadet.regNo}" value="present"></td>
+    <td data-label="❌ Absent"><input type="radio" name="${cadet.regNo}" value="absent"></td>
+    <td data-label="⚪ Neutral"><input type="radio" name="${cadet.regNo}" value="neutral" checked></td>
+    <td data-label="Reason">
+        <select name="reason-${cadet.regNo}" class="reason-select">
+            <option value="">Select Reason</option>
+            <option value="unit">Unit</option>
+            <option value="college">College</option>
+            <option value="both">Both</option>
+        </select>
+    </td>
+`;
+
                     tableBody.appendChild(row);
                 });
             } catch (error) {
