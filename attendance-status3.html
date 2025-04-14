@@ -348,36 +348,36 @@
                 }
 
                 let table = `<table>
-                                <thead>
-                                    <tr>
-                                      
-                                        <th>Reg No</th>
-                                        <th>Name</th>
-                                        <th>✅ Present</th>
-                                        <th>❌ Absent</th>
-                                        <th>⚪ Neutral</th>
-                                        <th>📊 Attendance %</th>
-                                    </tr>
-                                </thead>
-                                <tbody>`;
+    <thead>
+        <tr>
+            <th>Reg No</th>
+            <th>Name</th>
+            <th>✅ Present</th>
+            <th>❌ Absent</th>
+            <th>⚪ Neutral</th>
+            <th>📊 Attendance %</th>
+        </tr>
+    </thead>
+    <tbody>`;
 
-                for (let  regNo in data) {
-                    const cadet = data[regNo];
-                    const total = cadet.present + cadet.absent + cadet.neutral;
-                    const attendancePercentage = total > 0 ? ((cadet.present / total) * 100).toFixed(2) : "0.00";
+for (let regNo in data) {
+    const cadet = data[regNo];
+    const total = cadet.present + cadet.absent + cadet.neutral;
+    const attendancePercentage = total > 0 ? ((cadet.present / total) * 100).toFixed(2) : "0.00";
 
-                    table += `<tr>
-                            
-                             <td>${regNo}</td>
-                                <td>${cadet.present}</td>
-                                <td>${cadet.absent}</td>
-                                <td>${cadet.neutral}</td>
-                                <td class="percentage">${attendancePercentage}%</td>
-                            </tr>`;
-                }
+    table += `<tr>
+        <td data-label="Reg No">${regNo}</td>
+        <td data-label="Name">${cadet.name || "-"}</td>
+        <td data-label="✅ Present">${cadet.present}</td>
+        <td data-label="❌ Absent">${cadet.absent}</td>
+        <td data-label="⚪ Neutral">${cadet.neutral}</td>
+        <td data-label="📊 Attendance %">${attendancePercentage}%</td>
+    </tr>`;
+}
 
- table += `</tbody></table>`;
-                result.innerHTML = table;
+table += "</tbody></table>";
+result.innerHTML = table;
+
             } catch (error) {
                 console.error("Error fetching attendance data:", error);
                 result.innerHTML = "<p class='error-message'>❌ Error fetching attendance data. Please try again.</p>";
