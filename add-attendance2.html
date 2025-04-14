@@ -285,15 +285,14 @@
                 <img src="https://res.cloudinary.com/dcd0vatd4/image/upload/v1743165814/download_rhmhhr.png" alt="Logo">
                 <h2>VVCE NCC</h2>
                 
-            </div>
+             </div>
             <ul class="nav-menu">
-                <li class="nav-item"><a href="home2.html" class="nav-link"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-
-                <li class="nav-item"><a href="add-attendance2.html" class="nav-link active"><i class="fa-solid fa-calendar-plus"></i> Add Attendance</a></li>
-                <li class="nav-item"><a href="attendance-status2.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Attendance Status</a></li>
-                <li class="nav-item"><a href="download-attendance2.html" class="nav-link"><i class="fa-solid fa-download"></i> Download Reports</a></li>
-                <li class="nav-item"><a href="refreshment2.html" class="nav-link"><i class="fa-solid fa-coffee"></i> Add Refreshments Bills</a></li>
-                <li class="nav-item"><a href="refresh2.html" class="nav-link"><i class="fa-solid fa-coffee"></i> Fetch Refreshments Bills</a></li>
+                <li class="nav-item"><a href="home.html2" class="nav-link"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+               <li class="nav-item"><a href="add-attendance.html2" class="nav-link active "><i class="fa-solid fa-calendar-plus"></i> Add Attendance</a></li>
+                <li class="nav-item"><a href="attendance-status.html2" class="nav-link"><i class="fa-solid fa-calendar-check"></i> Attendance Status</a></li>
+                <li class="nav-item"><a href="download-attendance.html2" class="nav-link "><i class="fa-solid fa-download"></i> Download Reports</a></li>
+                <li class="nav-item"><a href="refreshment.html2" class="nav-link"><i class="fa-solid fa-coffee"></i> Add Refreshments Bills</a></li>
+                <li class="nav-item"><a href="refresh.html2" class="nav-link"><i class="fa-solid fa-coffee"></i> Fetch Refreshments Bills</a></li>
             </ul>
         </div>
         
@@ -353,21 +352,22 @@
 
                 cadets.forEach((cadet, index) => {
                     const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${index + 1}</td>
-                        <td>${cadet.name} (${cadet.regNo})</td>
-                        <td><input type="radio" name="${cadet.regNo}" value="present"></td>
-                        <td><input type="radio" name="${cadet.regNo}" value="absent"></td>
-                        <td><input type="radio" name="${cadet.regNo}" value="neutral" checked></td>
-                        <td>
-                            <select name="reason-${cadet.regNo}" class="reason-select">
-                                <option value="">Select Reason</option>
-                                <option value="unit">Unit</option>
-                                <option value="college">College</option>
-                                <option value="both">Both</option>
-                            </select>
-                        </td>
-                    `;
+                   row.innerHTML = `
+    <td data-label="Sl. No">${index + 1}</td>
+    <td data-label="Name (Reg No)">${cadet.name} (${cadet.regNo})</td>
+    <td data-label="✅ Present"><input type="radio" name="${cadet.regNo}" value="present"></td>
+    <td data-label="❌ Absent"><input type="radio" name="${cadet.regNo}" value="absent"></td>
+    <td data-label="⚪ Neutral"><input type="radio" name="${cadet.regNo}" value="neutral" checked></td>
+    <td data-label="Reason">
+        <select name="reason-${cadet.regNo}" class="reason-select">
+            <option value="">Select Reason</option>
+            <option value="unit">Unit</option>
+            <option value="college">College</option>
+            <option value="both">Both</option>
+        </select>
+    </td>
+`;
+
                     tableBody.appendChild(row);
                 });
             } catch (error) {
